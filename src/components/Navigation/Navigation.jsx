@@ -14,7 +14,7 @@ const Navigation = () => {
         setAnchorEl(null);
     };
     const navigate = useNavigate();
-    const handleLogout=()=>{
+    const handleLogout = () => {
         console.log("logout")
         handleClose()
     }
