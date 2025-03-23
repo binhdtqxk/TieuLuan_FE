@@ -3,7 +3,7 @@ import HomePage from "./components/HomePage/HomePage";
 
 export const routes=[
     {
-        path: "/",
+        path: "/*",
         Component: true?HomePage:Authentication
       },
 ]
