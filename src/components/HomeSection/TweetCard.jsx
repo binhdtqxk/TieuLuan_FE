@@ -24,8 +24,14 @@ const TweetCard = () => {
         console.log("delete tweet");
         handleClose();
     }
-    const handleOpenReplyModel=()=>{
+    const handleOpenReplyModel = () => {
         console.log("open model");
+    }
+    const handleCreateRetweet = () => {
+        console.log("handle create retweet")
+    }
+    const handleLikeTweet = () => {
+        console.log("handle like tweet")
     }
     return (
         <div className=''>
@@ -84,9 +90,42 @@ const TweetCard = () => {
                         </div>
                         <div className='py-5 flex flex-wrap justify-between items-center'>
                             <div className='space-x-3 flex items-center text-gray-600'>
-                                <ChatBubbleOutlineIcon className='cursor-pointer' onClick={handleOpenReplyModel}/>
-                                <p>43</p>
+                                <ChatBubbleOutlineIcon className='cursor-pointer' onClick={handleOpenReplyModel} />
+                                <p className='m-0'>43</p>
                             </div>
+
+                            <div className={`${true ? "text-pink-600" : "text-gray-600"} space-x-3 flex
+                             items-center`}>
+                                <RepeatIcon
+                                    onClick={handleCreateRetweet}
+                                    className='cursor-pointer'
+                                />
+                                <p className='m-0'>54</p>
+                            </div>
+                            <div className={`${true ? "text-pink-600" : "text-gray-600"} space-x-3 flex
+                             items-center`}>
+                                {true ? <FavoriteIcon
+                                    onClick={handleLikeTweet}
+                                    className='cursor-pointer' /> :
+                                    <FavoriteBorderIcon
+                                        onClick={handleLikeTweet}
+                                        className='cursor-pointer' />}
+                                <p className='m-0'>54</p>
+                            </div>
+
+                            <div className='space-x-3 flex items-center text-gray-600'>
+                                <BarChartIcon
+                                    className='cursor-pointer'
+                                    onClick={handleOpenReplyModel} />
+                                <p className='m-0'>430</p>
+                            </div>
+
+                            <div className='space-x-3 flex items-center text-gray-600'>
+                                <FileUploadIcon
+                                    className='cursor-pointer'
+                                    onClick={handleOpenReplyModel} />
+                            </div>
+
                         </div>
                     </div>
                 </div>
