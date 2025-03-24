@@ -85,14 +85,14 @@ const TweetCard = () => {
 
 
                     <div className='mt-2'>
-                        <div className='cursor-pointer'>
+                        <div onClick={()=>navigate(`/twit/${3}`)} className='cursor-pointer'>
                             <p className='mb-2 p-0'>social network- full stack project with spring boot and reactJs
                             </p>
                             <img className='w-[28rem] border border-gray-400 p-5 rounded-md' 
                             src="https://pbs.twimg.com/profile_images/1843591782317338628/pGgFUDI9_400x400.png" 
                             alt="" />
                         </div>
-                        <div className='py-5 flex flex-wrap justify-between items-center'>
+                        <div className='py-5 flex flex-wrap justify-between items-center pr-10'>
                             <div className='space-x-3 flex items-center text-gray-600'>
                                 <ChatBubbleOutlineIcon className='cursor-pointer' onClick={handleOpenReplyModel} />
                                 <p className='m-0'>43</p>

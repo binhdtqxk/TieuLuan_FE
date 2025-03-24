@@ -6,9 +6,10 @@ import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { TabList, TabPanel, TabContext } from "@mui/lab";
+import TweetCard from "../HomeSection/TweetCard";
 
 const Profile = () => {
-    const [tabValue,setTabValue]=useState("1");
+  const [tabValue, setTabValue] = useState("1");
   const navigate = useNavigate();
   const handleBack = () => navigate(-1);
   const handleOpenProfileModel = () => {
@@ -17,20 +18,20 @@ const Profile = () => {
   const handleFollowUser = () => {
     console.log("follow user");
   };
-  const handleTabChange=(event, newValue)=>{
+  const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
 
-    if(newValue==="4"){
-        console.log("likes tweet");
-    }else if(newValue==="1"){
-        console.log("user tweet");
+    if (newValue === "4") {
+      console.log("likes tweet");
+    } else if (newValue === "1") {
+      console.log("user tweet");
     }
-  }
+  };
   return (
     <div>
-      <section className={`z-50 flex items-center sticky top-0 bg-opacity-95`}>
+      <section className={`z-50 flex items-center sticky top-0 bg-white/[var(--bg-opacity)] [--bg-opacity:95%]`}>
         <KeyboardBackspaceIcon className="cursor-pointer" onClick={handleBack} />
-        <h1 className="py-2 !text-xl font-bold opacity-90 ml-5 ">Phan Thanh Binh</h1>
+        <h1 className="py-2 !text-xl font-bold opacity-100 ml-5 ">Phan Thanh Binh</h1>
       </section>
 
       <section>
@@ -128,22 +129,26 @@ const Profile = () => {
       </section>
 
       <section>
-      <Box sx={{ width: '100%', typography: 'body1' }}>
-      <TabContext value={tabValue}>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <TabList onChange={handleTabChange} aria-label="lab API tabs example">
-            <Tab label="Tweets" value="1" />
-            <Tab label="Replies" value="2" />
-            <Tab label="Media" value="3" />
-            <Tab label="Likes" value="4" />
-          </TabList>
+        <Box sx={{ width: "100%", typography: "body1" }}>
+          <TabContext value={tabValue}>
+            <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+              <TabList onChange={handleTabChange} aria-label="lab API tabs example">
+                <Tab label="Tweets" value="1" />
+                <Tab label="Replies" value="2" />
+                <Tab label="Media" value="3" />
+                <Tab label="Likes" value="4" />
+              </TabList>
+            </Box>
+            <TabPanel value="1">
+              {[1, 1, 1, 1].map((item) => (
+                <TweetCard />
+              ))}
+            </TabPanel>
+            <TabPanel value="2">User Replies</TabPanel>
+            <TabPanel value="3">Media</TabPanel>
+            <TabPanel value="4">Likes</TabPanel>
+          </TabContext>
         </Box>
-        <TabPanel value="1"> User Tweets</TabPanel>
-        <TabPanel value="2">User Replies</TabPanel>
-        <TabPanel value="3">Media</TabPanel>
-        <TabPanel value="4">Likes</TabPanel>
-      </TabContext>
-    </Box>
       </section>
     </div>
   );
