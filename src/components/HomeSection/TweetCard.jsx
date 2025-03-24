@@ -53,7 +53,9 @@ const TweetCard = () => {
 
                             <span className='font-semibold'>Phan Thanh Binh</span>
                             <span className='text-gray-600'>@PhanThanhBinh . 2m</span>
-                            <img className='ml-2 w-5 h-5' src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Twitter_Verified_Badge.svg" alt="" />
+                            <img className='ml-2 w-5 h-5' 
+                            src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Twitter_Verified_Badge.svg" 
+                            alt="" />
                         </div>
                         <div>
                             <Button
@@ -86,7 +88,9 @@ const TweetCard = () => {
                         <div className='cursor-pointer'>
                             <p className='mb-2 p-0'>social network- full stack project with spring boot and reactJs
                             </p>
-                            <img className='w-[28rem] border border-gray-400 p-5 rounded-md' src="https://pbs.twimg.com/profile_images/1843591782317338628/pGgFUDI9_400x400.png" alt="" />
+                            <img className='w-[28rem] border border-gray-400 p-5 rounded-md' 
+                            src="https://pbs.twimg.com/profile_images/1843591782317338628/pGgFUDI9_400x400.png" 
+                            alt="" />
                         </div>
                         <div className='py-5 flex flex-wrap justify-between items-center'>
                             <div className='space-x-3 flex items-center text-gray-600'>
