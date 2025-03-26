@@ -12,10 +12,10 @@ import ProfileModal from "./ProfileModal";
 const Profile = () => {
   const [tabValue, setTabValue] = useState("1");
   const navigate = useNavigate();
+  const [openProfileModal, setOpenProfileModal] = useState(false);
+  const handleOpenProfileModal = () => setOpenProfileModal(true);
+  const handleClose = () => setOpenProfileModal(false);
   const handleBack = () => navigate(-1);
-  const handleOpenProfileModel = () => {
-    console.log("open profile model");
-  };
   const handleFollowUser = () => {
     console.log("follow user");
   };
@@ -30,9 +30,16 @@ const Profile = () => {
   };
   return (
     <div>
-      <section className={`z-50 flex items-center sticky top-0 bg-white/[var(--bg-opacity)] [--bg-opacity:95%]`}>
-        <KeyboardBackspaceIcon className="cursor-pointer" onClick={handleBack} />
-        <h1 className="py-2 !text-xl font-bold opacity-100 ml-5 ">Phan Thanh Binh</h1>
+      <section
+        className={`z-50 flex items-center sticky top-0 bg-white/[var(--bg-opacity)] [--bg-opacity:95%]`}
+      >
+        <KeyboardBackspaceIcon
+          className="cursor-pointer"
+          onClick={handleBack}
+        />
+        <h1 className="py-2 !text-xl font-bold opacity-100 ml-5 ">
+          Phan Thanh Binh
+        </h1>
       </section>
 
       <section>
@@ -58,7 +65,7 @@ const Profile = () => {
 
           {true ? (
             <Button
-              onClick={handleOpenProfileModel}
+              onClick={handleOpenProfileModal}
               variant="contained"
               sx={{
                 borderRadius: "20px",
@@ -82,7 +89,7 @@ const Profile = () => {
         </div>
         <div>
           <div className="flex items-center">
-            <h1 className="font-bold !text-lg">Phan Thanh Binh</h1>
+            <h1 className="m-0 font-bold !text-lg">Phan Thanh Binh</h1>
             {true && (
               <img
                 className="ml-2 w-5 h-5"
@@ -96,8 +103,10 @@ const Profile = () => {
 
         <div className="mt-2 space-y-3">
           <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Esse natus vitae id sit praesentium doloremque libero sunt,
-            quae, fuga sint quisquam est doloribus ratione iure. Ad repudiandae qui corrupti repellat?
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Esse natus
+            vitae id sit praesentium doloremque libero sunt, quae, fuga sint
+            quisquam est doloribus ratione iure. Ad repudiandae qui corrupti
+            repellat?
           </p>
           <div className="py-1 flex space-x-5">
             <div className="flex items-center text-gray-500">
@@ -133,7 +142,10 @@ const Profile = () => {
         <Box sx={{ width: "100%", typography: "body1" }}>
           <TabContext value={tabValue}>
             <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-              <TabList onChange={handleTabChange} aria-label="lab API tabs example">
+              <TabList
+                onChange={handleTabChange}
+                aria-label="lab API tabs example"
+              >
                 <Tab label="Tweets" value="1" />
                 <Tab label="Replies" value="2" />
                 <Tab label="Media" value="3" />
@@ -153,7 +165,7 @@ const Profile = () => {
       </section>
 
       <section>
-        <ProfileModal/>
+        <ProfileModal handleClose={handleClose} open={openProfileModal}/>
       </section>
     </div>
   );
