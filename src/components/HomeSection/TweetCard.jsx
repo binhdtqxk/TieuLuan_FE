@@ -9,10 +9,13 @@ import FileUploadIcon from '@mui/icons-material/FileUpload';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { Chat } from '@mui/icons-material';
+import ReplyModal from './ReplyModal';
+import { useState } from 'react';
 
 const TweetCard = () => {
     const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const [openReplyModal, setOpenReplyModal] = useState(false);
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -27,14 +30,18 @@ const TweetCard = () => {
     const handleOpenReplyModel = () => {
         console.log("open model");
     }
-    const handleCreateRetweet = () => {
-        console.log("handle create retweet")
+    const handleOpenReplyModal = () => {
+        setOpenReplyModal(true);
     }
     const handleLikeTweet = () => {
         console.log("handle like tweet")
     }
+    const handleCloseReplyModal=()=>{
+        setOpenReplyModal(false);
+    }
+    
     return (
-        <div className=''>
+        <React.Fragment>
 
             {/* <div className='flex items-center font-semibold text-gray-700 py-2'>
                 <RepeatIcon />
@@ -94,14 +101,14 @@ const TweetCard = () => {
                         </div>
                         <div className='py-5 flex flex-wrap justify-between items-center pr-10'>
                             <div className='space-x-3 flex items-center text-gray-600'>
-                                <ChatBubbleOutlineIcon className='cursor-pointer' onClick={handleOpenReplyModel} />
+                                <ChatBubbleOutlineIcon className='cursor-pointer' onClick={handleOpenReplyModal} />
                                 <p className='m-0'>43</p>
                             </div>
 
                             <div className={`${true ? "text-pink-600" : "text-gray-600"} space-x-3 flex
                              items-center`}>
                                 <RepeatIcon
-                                    onClick={handleCreateRetweet}
+                                    onClick={handleOpenReplyModal}
                                     className='cursor-pointer'
                                 />
                                 <p className='m-0'>54</p>
@@ -135,8 +142,11 @@ const TweetCard = () => {
                 </div>
 
             </div>
+            <section>
+                <ReplyModal handleClose={handleCloseReplyModal} open={openReplyModal}/>
+            </section>
 
-        </div>
+        </React.Fragment>
     )
 }
 
