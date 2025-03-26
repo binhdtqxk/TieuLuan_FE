@@ -7,6 +7,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { TabList, TabPanel, TabContext } from "@mui/lab";
 import TweetCard from "../HomeSection/TweetCard";
+import ProfileModal from "./ProfileModal";
 
 const Profile = () => {
   const [tabValue, setTabValue] = useState("1");
@@ -128,7 +129,7 @@ const Profile = () => {
         </div>
       </section>
 
-      <section>
+      <section className="py-5">
         <Box sx={{ width: "100%", typography: "body1" }}>
           <TabContext value={tabValue}>
             <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -149,6 +150,10 @@ const Profile = () => {
             <TabPanel value="4">Likes</TabPanel>
           </TabContext>
         </Box>
+      </section>
+
+      <section>
+        <ProfileModal/>
       </section>
     </div>
   );
