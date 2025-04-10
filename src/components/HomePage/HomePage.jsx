@@ -6,6 +6,7 @@ import RightPart from "../RightPart/RightPart";
 import { Route, Routes } from "react-router-dom";
 import Profile from "../Profile/Profile";
 import TwitDetails from "../TweetDetails/TwitDetails";
+import Authentication from "../Authentication/Authentication";
 const HomePage = () =>{
     return(
         <Grid container xs={12} className="px-5 lg:px-36 justify-between">
