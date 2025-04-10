@@ -4,6 +4,6 @@ import HomePage from "./components/HomePage/HomePage";
 export const routes=[
     {
         path: "/*",
-        Component: true?HomePage:Authentication
+        Component: false?HomePage:Authentication
       },
 ]
