@@ -1,25 +1,33 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
+import * as React from "react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import Modal from "@mui/material/Modal";
+import SigninForm from "./SigninForm";
+import SignupForm from "./SignupForm";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
   width: 550,
-  bgcolor: 'background.paper',
+  bgcolor: "background.paper",
   boxShadow: 24,
   p: 4,
-  borderRadius:2,
-  outline:"none"
+  borderRadius: 2,
+  outline: "none",
 };
 
-export default function AuthModal({open,handleClose}) {
-
-
+export default function AuthModal({ open, handleClose }) {
+  const location = useLocation();
+  const navigate=useNavigate();
+  console.log(location)
+  const handleNavigate=()=>{
+    const path=location.pathname === "/signup" ? "signin" : "signup";
+    navigate(`/${path}`);
+  }
   return (
     <div>
       <Modal
@@ -29,12 +37,29 @@ export default function AuthModal({open,handleClose}) {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Text in a modal
-          </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-          </Typography>
+          <h1 className="text-center !font-bold !text-3xl pb-20">
+            
+            {location.pathname === "/signup"
+              ? "Create your account"
+              : "Sign in to X"}
+          </h1>
+
+          {location.pathname === "/signup" ? <SignupForm /> : <SigninForm />}
+
+          <h1 className="text-center py-2 !font-semibold !text-lg text-gray-500">
+            {location.pathname === "/signup"
+              ? "Already have Account?"
+              : "Don't have an account?"}
+          </h1>
+
+          <Button
+            fullWidth
+            variant="outlined"
+            onClick={handleNavigate}
+            sx={{ borderRadius: "29px", py: "15px" }}
+          >
+            {location.pathname === "/signup" ? "signin" : "signup"}
+          </Button>
         </Box>
       </Modal>
     </div>
