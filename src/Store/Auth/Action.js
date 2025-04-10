@@ -1,12 +1,18 @@
 import axios from "axios";
 import React from "react";
 import { API_BASE_URL } from "../../config/api";
-import { GET_USER_PROFILE_FAILURE, GET_USER_PROFILE_SUCCESS, LOGIN_USER_FAILURE, LOGIN_USER_SUCCESS } from "./Actiontype";
+import {
+  GET_USER_PROFILE_FAILURE,
+  GET_USER_PROFILE_SUCCESS,
+  LOGIN_USER_FAILURE,
+  LOGIN_USER_SUCCESS,
+} from "./Actiontype";
 
 export const loginUser = (loginData) => async (dispatch) => {
   try {
     const { data } = await axios.post(`${API_BASE_URL}/auth/signin`, loginData);
     if (data.jwt) {
+      console.log("login user",data.jwt);
       localStorage.setItem("jwt", data.jwt);
     }
     dispatch({ type: LOGIN_USER_SUCCESS, payload: data.jwt });
@@ -17,28 +23,32 @@ export const loginUser = (loginData) => async (dispatch) => {
 };
 
 export const registerUser = (registerData) => async (dispatch) => {
-    try {
-      const { data } = await axios.post(`${API_BASE_URL}/auth/signup`, registerData);
-      if (data.jwt) {
-        localStorage.setItem("jwt", data.jwt);
-      }
-      dispatch({ type: REGISTER_USER_SUCCESS, payload: data });
-    } catch (error) {
-      console.log("error", error);
-      dispatch({ type: REGISTER_USER_FAILURE, payload: error.message });
+  try {
+    const { data } = await axios.post(
+      `${API_BASE_URL}/auth/signup`,
+      registerData
+    );
+    if (data.jwt) {
+      localStorage.setItem("jwt", data.jwt);
+      console.log("signup user");
     }
+    dispatch({ type: REGISTER_USER_SUCCESS, payload: data });
+  } catch (error) {
+    console.log("error", error);
+    dispatch({ type: REGISTER_USER_FAILURE, payload: error.message });
+  }
 };
 
 export const getUserProfile = (jwt) => async (dispatch) => {
-    try {
-      const { data } = await axios.get(`${API_BASE_URL}/api/users/profile`,{
-        headers:{
-            "Authorization":`Bearer ${jwt}`
-        }
-      });
-      dispatch({ type: GET_USER_PROFILE_SUCCESS, payload: data });
-    } catch (error) {
-      console.log("error", error);
-      dispatch({ type: GET_USER_PROFILE_FAILURE, payload: error.message });
-    }
+  try {
+    const { data } = await axios.get(`${API_BASE_URL}/api/users/profile`, {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+    dispatch({ type: GET_USER_PROFILE_SUCCESS, payload: data });
+  } catch (error) {
+    console.log("error", error);
+    dispatch({ type: GET_USER_PROFILE_FAILURE, payload: error.message });
+  }
 };
