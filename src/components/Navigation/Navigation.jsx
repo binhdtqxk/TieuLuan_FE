@@ -3,8 +3,13 @@ import { navigation } from "./NavigationMenu";
 import { useNavigate } from "react-router-dom";
 import { Button, Avatar, Menu, MenuItem } from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../Store/Auth/Action";
 
 const Navigation = () => {
+  const { auth } = useSelector((store) => store);
+  const dispatch= useDispatch();
+  console.log(auth);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -15,8 +20,7 @@ const Navigation = () => {
   };
   const navigate = useNavigate();
   const handleLogout = () => {
-    console.log("logout");
-    handleClose();
+    dispatch(logout());
   };
   return (
     <div className="h-screen sticky top-0">
@@ -74,8 +78,8 @@ const Navigation = () => {
           />
         </div>
         <div>
-          <span>Phan Thanh Binh</span>
-          <span className="opacity-70">@BinhPhanThanh</span>
+          <span>{auth.user?.fullName}</span>
+          <span className="opacity-70">@{auth.user?.fullName?.split(" ").join("_").toLowerCase()}</span>
         </div>
         <Button
           id="basic-button"

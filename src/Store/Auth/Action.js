@@ -6,6 +6,7 @@ import {
   GET_USER_PROFILE_SUCCESS,
   LOGIN_USER_FAILURE,
   LOGIN_USER_SUCCESS,
+  LOGOUT,
 } from "./Actiontype";
 
 export const loginUser = (loginData) => async (dispatch) => {
@@ -51,4 +52,10 @@ export const getUserProfile = (jwt) => async (dispatch) => {
     console.log("error", error);
     dispatch({ type: GET_USER_PROFILE_FAILURE, payload: error.message });
   }
+};
+
+export const logout = () => async (dispatch) => {
+    localStorage.removeItem("jwt");
+    dispatch({ type: LOGOUT, payload:null});
+  
 };
