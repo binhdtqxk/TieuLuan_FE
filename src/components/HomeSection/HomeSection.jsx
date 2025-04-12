@@ -8,7 +8,8 @@ import TagFacesIcon from "@mui/icons-material/TagFaces";
 import { Button } from "@mui/material";
 import TweetCard from "./TweetCard";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllTweets } from "../../Store/twit/Action";
+import { createTweet, getAllTweets } from "../../Store/twit/Action";
+import { uploadToCloudinary } from "../../Utils/uploadToCloudinary";
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("Tweet text is required"),
 });
@@ -21,22 +22,24 @@ const HomeSection = () => {
   console.log("twit", twit);
 
   const handleSubmit = (values) => {
+    dispatch(createTweet(values));
     console.log("value", values);
   };
   useEffect(() => {
     dispatch(getAllTweets());
-  }, [twit.like,twit.retwit]);
+  }, [twit.like, twit.retwit]);
   const formik = useFormik({
     initialValues: {
       content: "",
       image: "",
+      isTweet:true,
     },
     onSubmit: handleSubmit,
     validationSchema,
   });
-  const handleSelectImage = (event) => {
+  const handleSelectImage = async (event) => {
     setUploadingImage(true);
-    const imgUrl = event.target.files[0];
+    const imgUrl = await uploadToCloudinary(event.target.files[0]);
     formik.setFieldValue("image", imgUrl);
     setSelectedImage(imgUrl);
     setUploadingImage(false);
@@ -106,6 +109,7 @@ const HomeSection = () => {
                 </div>
               </div>
             </form>
+            <div>{selectedImage && <img src={selectedImage} alt="" />}</div>
           </div>
         </div>
       </section>
