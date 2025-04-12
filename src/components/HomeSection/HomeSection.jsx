@@ -21,9 +21,11 @@ const HomeSection = () => {
   const { twit } = useSelector((store) => store);
   console.log("twit", twit);
 
-  const handleSubmit = (values) => {
+  const handleSubmit = (values,actions) => {
     dispatch(createTweet(values));
+    actions.resetForm();
     console.log("value", values);
+    setSelectedImage("");
   };
   useEffect(() => {
     dispatch(getAllTweets());
