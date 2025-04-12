@@ -9,6 +9,11 @@ import {
   REGISTER_USER_SUCCESS,
   REGISTER_USER_FAILURE,
   LOGOUT,
+  FIND_USER_BY_ID_SUCCESS,
+  FIND_USER_BY_ID_FAILURE,
+  UPDATE_USER_SUCCESS,
+  UPDATE_USER_FAILURE,
+  FOLLOW_USER_SUCCESS,
 } from "./Actiontype";
 
 export const loginUser = (loginData) => async (dispatch) => {
@@ -53,6 +58,38 @@ export const getUserProfile = (jwt) => async (dispatch) => {
   } catch (error) {
     console.log("error", error);
     dispatch({ type: GET_USER_PROFILE_FAILURE, payload: error.message });
+  }
+};
+
+export const findUserById = (userId) => async (dispatch) => {
+  try {
+    const { data } = await axios.get(`/api/users/${userId}`)
+    dispatch({type:FIND_USER_BY_ID_SUCCESS,payload:data});
+  } catch (error) {
+    console.log("error", error);
+    dispatch({ type: FIND_USER_BY_ID_FAILURE, payload: error.message });
+  }
+};
+
+export const updateUserProfile = (reqData) => async (dispatch) => {
+  try {
+    const { data } = await axios.put(`/api/users/update`,reqData);
+    console.log("update user: ",data);
+    dispatch({type:UPDATE_USER_SUCCESS,payload:data})
+  } catch (error) {
+    console.log("error", error);
+    dispatch({ type: UPDATE_USER_FAILURE, payload: error.message });
+  }
+};
+
+export const followUser = (userId) => async (dispatch) => {
+  try {
+    const { data } = await axios.put(`/api/users/${userId}/follow`)
+    console.log("followed user: "+data)
+    dispatch({type:FOLLOW_USER_SUCCESS,payload:data})
+  } catch (error) {
+    console.log("error", error);
+    dispatch({ type: FOLLOW_USER_SUCCESS, payload: error.message });
   }
 };
 

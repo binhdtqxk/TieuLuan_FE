@@ -9,6 +9,9 @@ import {
   REGISTER_USER_REQUEST,
   REGISTER_USER_SUCCESS,
   LOGOUT,
+  FIND_USER_BY_ID_SUCCESS,
+  FOLLOW_USER_SUCCESS,
+  UPDATE_USER_SUCCESS,
 } from "./Actiontype";
 
 const initialState = {
@@ -16,7 +19,6 @@ const initialState = {
   loading: false,
   error: null,
   jwt: null,
-
 };
 export const authReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -33,6 +35,28 @@ export const authReducer = (state = initialState, action) => {
         loading: false,
         error: null,
         user: action.payload,
+      };
+    case UPDATE_USER_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        error: null,
+        user: action.payload,
+        updateUser: true,
+      };
+    case FIND_USER_BY_ID_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        error: null,
+        findUser: action.payload,
+      };
+    case FOLLOW_USER_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        error: null,
+        findUser: action.payload,
       };
     case LOGOUT:
       return initialState;
