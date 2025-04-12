@@ -64,9 +64,9 @@ export const createTweetReply=(tweetData)=>async(dispatch)=>{
 }
 export const createReTweet=(twitId)=>async(dispatch)=>{
     try{
-        const {data}=await api.post(`/api/twits/${twitId}/retwit`)
+        const {data}=await api.put(`/api/twits/${twitId}/retwit`)
         console.log("Retweet : ",data)
-        dispatch({type: RETWEET_REQUEST,payload:data})
+        dispatch({type: RETWEET_SUCCESS,payload:data})
     }catch(error){
         console.log("catch error - ", error)
         dispatch({type:RETWEET_FAILURE,payload:error.message})

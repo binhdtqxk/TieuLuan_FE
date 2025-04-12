@@ -12,7 +12,7 @@ import { Chat } from '@mui/icons-material';
 import ReplyModal from './ReplyModal';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { likeweet } from '../../Store/twit/Action';
+import { createReTweet, likeweet } from '../../Store/twit/Action';
 
 const TweetCard = ({item}) => {
     const navigate = useNavigate();
@@ -29,6 +29,10 @@ const TweetCard = ({item}) => {
     const handleDeleteTweet = () => {
         console.log("delete tweet");
         handleClose();
+    }
+    const handleCreateRetweet=()=>{
+        dispatch(createReTweet(item.id))
+        console.log("handle create retweet");
     }
     const handleOpenReplyModel = () => {
         console.log("open model");
@@ -106,7 +110,7 @@ const TweetCard = ({item}) => {
                             <div className={`${item.retwit ? "text-pink-600" : "text-gray-600"} space-x-3 flex
                              items-center`}>
                                 <RepeatIcon
-                                    onClick={handleOpenReplyModal}
+                                    onClick={handleCreateRetweet}
                                     className='cursor-pointer'
                                 />
                                 <p className='m-0'>{item.totalRetweets}</p>

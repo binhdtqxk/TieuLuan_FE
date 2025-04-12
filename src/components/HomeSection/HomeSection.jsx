@@ -25,7 +25,7 @@ const HomeSection = () => {
   };
   useEffect(() => {
     dispatch(getAllTweets());
-  }, [twit.like]);
+  }, [twit.like,twit.retwit]);
   const formik = useFormik({
     initialValues: {
       content: "",
