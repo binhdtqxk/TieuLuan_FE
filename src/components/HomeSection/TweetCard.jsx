@@ -53,7 +53,7 @@ const TweetCard = ({item}) => {
         <React.Fragment>
             <div className='flex space-x-5'>
                 <Avatar
-                    onClick={() => navigate(`/profile/${6}`)}
+                    onClick={() => navigate(`/profile/${item.user.id}`)}
                     className='cursor-pointer'
                     alt='username' src='https://pbs.twimg.com/profile_images/1843591782317338628/pGgFUDI9_400x400.png'
                 />
@@ -61,8 +61,8 @@ const TweetCard = ({item}) => {
                     <div className='flex justify-between items-center'>
                         <div className='flex cursor-pointer items-center space-x-2'>
 
-                            <span className='font-semibold'>{item.user.fullName}</span>
-                            <span className='text-gray-600'>@{item.user.fullName.split(" ").join("_").toLowerCase()} . 2m</span>
+                            <span className='font-semibold'>{item?.user?.fullName}</span>
+                            <span className='text-gray-600'>@{item?.user?.fullName?.split(" ").join("_").toLowerCase()} . 2m</span>
                             <img className='ml-2 w-5 h-5' 
                             src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Twitter_Verified_Badge.svg" 
                             alt="" />
@@ -95,35 +95,35 @@ const TweetCard = ({item}) => {
 
 
                     <div className='mt-2'>
-                        <div onClick={()=>navigate(`/twit/${3}`)} className='cursor-pointer'>
-                            <p className='mb-2 p-0'>{item.content}</p>
+                        <div onClick={()=>navigate(`/twit/${item?.id}`)} className='cursor-pointer'>
+                            <p className='mb-2 p-0'>{item?.content}</p>
                             <img className='w-[28rem] border border-gray-400 p-5 rounded-md' 
-                            src={item.image}
+                            src={item?.image}
                             alt="" />
                         </div>
                         <div className='py-5 flex flex-wrap justify-between items-center pr-10'>
                             <div className='space-x-3 flex items-center text-gray-600'>
                                 <ChatBubbleOutlineIcon className='cursor-pointer' onClick={handleOpenReplyModal} />
-                                <p className='m-0'>{item.totalReply}</p>
+                                <p className='m-0'>{item?.totalReply}</p>
                             </div>
 
-                            <div className={`${item.retwit ? "text-pink-600" : "text-gray-600"} space-x-3 flex
+                            <div className={`${item?.retwit ? "text-pink-600" : "text-gray-600"} space-x-3 flex
                              items-center`}>
                                 <RepeatIcon
                                     onClick={handleCreateRetweet}
                                     className='cursor-pointer'
                                 />
-                                <p className='m-0'>{item.totalRetweets}</p>
+                                <p className='m-0'>{item?.totalRetweets}</p>
                             </div>
-                            <div className={`${item.liked ? "text-pink-600" : "text-gray-600"} space-x-3 flex
+                            <div className={`${item?.liked ? "text-pink-600" : "text-gray-600"} space-x-3 flex
                              items-center`}>
-                                {item.liked ? <FavoriteIcon
+                                {item?.liked ? <FavoriteIcon
                                     onClick={handleLikeTweet}
                                     className='cursor-pointer' /> :
                                     <FavoriteBorderIcon
                                         onClick={handleLikeTweet}
                                         className='cursor-pointer' />}
-                                <p className='m-0'>{item.totalLike}</p>
+                                <p className='m-0'>{item?.totalLike}</p>
                             </div>
 
                             <div className='space-x-3 flex items-center text-gray-600'>
@@ -145,7 +145,7 @@ const TweetCard = ({item}) => {
 
             </div>
             <section>
-                <ReplyModal handleClose={handleCloseReplyModal} open={openReplyModal}/>
+                <ReplyModal handleClose= {handleCloseReplyModal} open={openReplyModal}  item={item} />
             </section>
 
         </React.Fragment>

@@ -9,6 +9,8 @@ import FmdGoodIcon from "@mui/icons-material/FmdGood";
 import TagFacesIcon from "@mui/icons-material/TagFaces";
 import { useFormik } from "formik";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { createTweetReply } from "../../Store/twit/Action";
 
 const style = {
   position: "absolute",
@@ -24,18 +26,21 @@ const style = {
   borderRadius: 4,
 };
 
-export default function ReplyModal({handleClose,open}) {
+export default function ReplyModal({handleClose,open,item}) {
   const navigate = useNavigate();
   const [uploadingImage, setUploadingImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
+  const dispatch=useDispatch();
   const handleSubmit = (values) => {
+    dispatch(createTweetReply(values));
+    handleClose();
     console.log("handle submit", values);
   };
   const formik = useFormik({
     initialValues: {
       content: "",
       image: "",
-      twitId: 4,
+      twitId: item?.id,
     },
     onSubmit: handleSubmit,
   });
@@ -66,8 +71,8 @@ export default function ReplyModal({handleClose,open}) {
             <div className="w-full">
               <div className="flex justify-between items-center">
                 <div className="flex cursor-pointer items-center space-x-2">
-                  <span className="font-semibold">Phan Thanh Binh</span>
-                  <span className="text-gray-600">@PhanThanhBinh . 2m</span>
+                  <span className="font-semibold">{item?.user?.fullName}</span>
+                  <span className="text-gray-600">@{item?.user?.fullName?.split(" ").join("_").toLowerCase()} . 2m</span>
                   <img
                     className="ml-2 w-5 h-5"
                     src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Twitter_Verified_Badge.svg"
@@ -82,8 +87,7 @@ export default function ReplyModal({handleClose,open}) {
                   className="cursor-pointer"
                 >
                   <p className="mb-2 p-0">
-                    social network- full stack project with spring boot and
-                    reactJs
+                    {item?.content}
                   </p>
                 </div>
               </div>
