@@ -11,12 +11,15 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import { Chat } from '@mui/icons-material';
 import ReplyModal from './ReplyModal';
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { likeweet } from '../../Store/twit/Action';
 
-const TweetCard = () => {
+const TweetCard = ({item}) => {
     const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [openReplyModal, setOpenReplyModal] = useState(false);
     const open = Boolean(anchorEl);
+    const dispatch=useDispatch();
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -34,20 +37,16 @@ const TweetCard = () => {
         setOpenReplyModal(true);
     }
     const handleLikeTweet = () => {
+        dispatch(likeweet(item.id));
         console.log("handle like tweet")
     }
     const handleCloseReplyModal=()=>{
         setOpenReplyModal(false);
     }
+    console.log()
     
     return (
         <React.Fragment>
-
-            {/* <div className='flex items-center font-semibold text-gray-700 py-2'>
-                <RepeatIcon />
-                <p>You Retweet</p>
-            </div> */}
-
             <div className='flex space-x-5'>
                 <Avatar
                     onClick={() => navigate(`/profile/${6}`)}
@@ -58,8 +57,8 @@ const TweetCard = () => {
                     <div className='flex justify-between items-center'>
                         <div className='flex cursor-pointer items-center space-x-2'>
 
-                            <span className='font-semibold'>Phan Thanh Binh</span>
-                            <span className='text-gray-600'>@PhanThanhBinh . 2m</span>
+                            <span className='font-semibold'>{item.user.fullName}</span>
+                            <span className='text-gray-600'>@{item.user.fullName.split(" ").join("_").toLowerCase()} . 2m</span>
                             <img className='ml-2 w-5 h-5' 
                             src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Twitter_Verified_Badge.svg" 
                             alt="" />
@@ -93,42 +92,41 @@ const TweetCard = () => {
 
                     <div className='mt-2'>
                         <div onClick={()=>navigate(`/twit/${3}`)} className='cursor-pointer'>
-                            <p className='mb-2 p-0'>social network- full stack project with spring boot and reactJs
-                            </p>
+                            <p className='mb-2 p-0'>{item.content}</p>
                             <img className='w-[28rem] border border-gray-400 p-5 rounded-md' 
-                            src="https://pbs.twimg.com/profile_images/1843591782317338628/pGgFUDI9_400x400.png" 
+                            src={item.image}
                             alt="" />
                         </div>
                         <div className='py-5 flex flex-wrap justify-between items-center pr-10'>
                             <div className='space-x-3 flex items-center text-gray-600'>
                                 <ChatBubbleOutlineIcon className='cursor-pointer' onClick={handleOpenReplyModal} />
-                                <p className='m-0'>43</p>
+                                <p className='m-0'>{item.totalReply}</p>
                             </div>
 
-                            <div className={`${true ? "text-pink-600" : "text-gray-600"} space-x-3 flex
+                            <div className={`${item.retwit ? "text-pink-600" : "text-gray-600"} space-x-3 flex
                              items-center`}>
                                 <RepeatIcon
                                     onClick={handleOpenReplyModal}
                                     className='cursor-pointer'
                                 />
-                                <p className='m-0'>54</p>
+                                <p className='m-0'>{item.totalRetweets}</p>
                             </div>
-                            <div className={`${true ? "text-pink-600" : "text-gray-600"} space-x-3 flex
+                            <div className={`${item.liked ? "text-pink-600" : "text-gray-600"} space-x-3 flex
                              items-center`}>
-                                {true ? <FavoriteIcon
+                                {item.liked ? <FavoriteIcon
                                     onClick={handleLikeTweet}
                                     className='cursor-pointer' /> :
                                     <FavoriteBorderIcon
                                         onClick={handleLikeTweet}
                                         className='cursor-pointer' />}
-                                <p className='m-0'>54</p>
+                                <p className='m-0'>{item.totalLike}</p>
                             </div>
 
                             <div className='space-x-3 flex items-center text-gray-600'>
                                 <BarChartIcon
                                     className='cursor-pointer'
                                     onClick={handleOpenReplyModel} />
-                                <p className='m-0'>430</p>
+                                <p className='m-0'>0</p>
                             </div>
 
                             <div className='space-x-3 flex items-center text-gray-600'>

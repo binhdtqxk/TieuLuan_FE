@@ -4,10 +4,22 @@ import React from "react";
 import AuthModel from "./AuthModal";
 import AuthModal from "./AuthModal";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 const Authentication = () => {
   const [openAuthModal, setOpenAuthModal] = useState(false);
   const hanldeOpenAuthModal = () => setOpenAuthModal(true);
   const handleCloseAuthModal = () => setOpenAuthModal(false);
+  const navigate=useNavigate();
+  const handleOpenRegisterModal=()=>{
+    const path= "signup"
+    navigate(`/${path}`);
+    hanldeOpenAuthModal();
+  }
+  const handleOpenSignInModal=()=>{
+    const path= "signin"
+    navigate(`/${path}`);
+    hanldeOpenAuthModal();
+  }
   return (
     <div>
       <Grid className="overflow-y-hidden" container>
@@ -35,7 +47,7 @@ const Authentication = () => {
               <GoogleLogin width={365} />
               <p className="py-2 m-0 text-center">OR</p>
               <Button
-                onClick={hanldeOpenAuthModal}
+                onClick={handleOpenRegisterModal}
                 fullWidth
                 variant="contained"
                 size="large"
@@ -55,7 +67,7 @@ const Authentication = () => {
               <h1 className="font-bold !text-xl">Already Have Account?</h1>
 
               <Button
-                onClick={hanldeOpenAuthModal}
+                onClick={handleOpenSignInModal}
                 fullWidth
                 variant="outlined"
                 size="large"
