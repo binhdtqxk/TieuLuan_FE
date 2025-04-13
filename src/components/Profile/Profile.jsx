@@ -9,10 +9,12 @@ import { TabList, TabPanel, TabContext } from "@mui/lab";
 import TweetCard from "../HomeSection/TweetCard";
 import ProfileModal from "./ProfileModal";
 import { useDispatch, useSelector } from "react-redux";
-import { findUserById } from "../../Store/Auth/Action";
+import { findUserById, followUser } from "../../Store/Auth/Action";
+import { getUserstweet } from "../../Store/twit/Action";
 
 const Profile = () => {
   const {auth}=useSelector((store)=>store);
+  const {twit}=useSelector((store)=>store);
   const [tabValue, setTabValue] = useState("1");
   const navigate = useNavigate();
   const [openProfileModal, setOpenProfileModal] = useState(false);
@@ -22,6 +24,7 @@ const Profile = () => {
   const dispatch=useDispatch();
   const {id}=useParams();
   const handleFollowUser = () => {
+    dispatch(followUser(id))
     console.log("follow user");
   };
   const handleTabChange = (event, newValue) => {
@@ -34,8 +37,9 @@ const Profile = () => {
     }
   };
   useEffect(()=>{
-    dispatch(findUserById(id))
-  },[])
+    dispatch(findUserById(id));
+    dispatch(getUserstweet(id));
+  },[id])
   return (
     <div>
       <section
@@ -71,7 +75,7 @@ const Profile = () => {
             }}
           />
 
-          {true ? (
+          {auth?.findUser?.req_user ? (
             <Button
               onClick={handleOpenProfileModal}
               variant="contained"
@@ -91,7 +95,7 @@ const Profile = () => {
                 height: "2.5rem",
               }}
             >
-              {true ? "Follow" : "UnFollow"}
+              {!auth?.findUser?.followed ? "Follow" : "UnFollow"}
             </Button>
           )}
         </div>
@@ -158,8 +162,8 @@ const Profile = () => {
               </TabList>
             </Box>
             <TabPanel value="1">
-              {[1, 1, 1, 1].map((item) => (
-                <TweetCard />
+              {twit.twits.map((item) => (
+                <TweetCard item={item}/>
               ))}
             </TabPanel>
             <TabPanel value="2">User Replies</TabPanel>

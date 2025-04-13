@@ -37,13 +37,6 @@ export const authReducer = (state = initialState, action) => {
         user: action.payload,
       };
     case UPDATE_USER_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        error: null,
-        user: action.payload,
-        updateUser: true,
-      };
     case FIND_USER_BY_ID_SUCCESS:
       return {
         ...state,

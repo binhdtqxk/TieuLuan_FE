@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import RepeatIcon from '@mui/icons-material/Repeat';
 import { useNavigate } from 'react-router-dom';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -20,6 +20,9 @@ const TweetCard = ({item}) => {
     const [openReplyModal, setOpenReplyModal] = useState(false);
     const open = Boolean(anchorEl);
     const dispatch=useDispatch();
+    useEffect(()=>{
+
+    },[item?.totalReply])
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -47,6 +50,7 @@ const TweetCard = ({item}) => {
     const handleCloseReplyModal=()=>{
         setOpenReplyModal(false);
     }
+    
     console.log()
     
     return (
@@ -55,7 +59,7 @@ const TweetCard = ({item}) => {
                 <Avatar
                     onClick={() => navigate(`/profile/${item.user.id}`)}
                     className='cursor-pointer'
-                    alt='username' src='https://pbs.twimg.com/profile_images/1843591782317338628/pGgFUDI9_400x400.png'
+                    alt='username' src={item?.user?.image}
                 />
                 <div className='w-full'>
                     <div className='flex justify-between items-center'>

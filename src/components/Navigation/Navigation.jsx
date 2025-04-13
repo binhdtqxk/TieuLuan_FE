@@ -48,7 +48,7 @@ const Navigation = () => {
             text-2xl mt-1.5"
             onClick={() =>
               item.title === "Profile"
-                ? navigate(`/profile/${5}`)
+                ? navigate(`/profile/${auth?.user?.id}`)
                 : navigate(item.path)
             }
           >

@@ -1,6 +1,6 @@
 import axios from "axios";
 import React from "react";
-import { API_BASE_URL } from "../../config/api";
+import { api, API_BASE_URL } from "../../config/api";
 import {
   GET_USER_PROFILE_FAILURE,
   GET_USER_PROFILE_SUCCESS,
@@ -63,7 +63,8 @@ export const getUserProfile = (jwt) => async (dispatch) => {
 
 export const findUserById = (userId) => async (dispatch) => {
   try {
-    const { data } = await axios.get(`/api/users/${userId}`)
+    const { data } = await api.get(`${API_BASE_URL}/api/users/${userId}`);
+    console.log("find user by id: ",data)
     dispatch({type:FIND_USER_BY_ID_SUCCESS,payload:data});
   } catch (error) {
     console.log("error", error);
@@ -73,7 +74,7 @@ export const findUserById = (userId) => async (dispatch) => {
 
 export const updateUserProfile = (reqData) => async (dispatch) => {
   try {
-    const { data } = await axios.put(`/api/users/update`,reqData);
+    const { data } = await api.put(`/api/users/update`,reqData);
     console.log("update user: ",data);
     dispatch({type:UPDATE_USER_SUCCESS,payload:data})
   } catch (error) {
@@ -84,7 +85,7 @@ export const updateUserProfile = (reqData) => async (dispatch) => {
 
 export const followUser = (userId) => async (dispatch) => {
   try {
-    const { data } = await axios.put(`/api/users/${userId}/follow`)
+    const { data } = await api.put(`/api/users/${userId}/follow`)
     console.log("followed user: "+data)
     dispatch({type:FOLLOW_USER_SUCCESS,payload:data})
   } catch (error) {
