@@ -74,7 +74,7 @@ const Navigation = () => {
         <div className="items-center space-x-3">
           <Avatar
             alt="username"
-            src="https://pbs.twimg.com/profile_images/1843591782317338628/pGgFUDI9_400x400.png"
+            src={auth?.user?.image}
           />
         </div>
         <div>
