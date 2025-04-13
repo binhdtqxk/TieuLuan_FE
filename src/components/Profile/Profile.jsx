@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Avatar, Box, Button, Tab, Tabs } from "@mui/material";
 import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
@@ -8,14 +8,19 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { TabList, TabPanel, TabContext } from "@mui/lab";
 import TweetCard from "../HomeSection/TweetCard";
 import ProfileModal from "./ProfileModal";
+import { useDispatch, useSelector } from "react-redux";
+import { findUserById } from "../../Store/Auth/Action";
 
 const Profile = () => {
+  const {auth}=useSelector((store)=>store);
   const [tabValue, setTabValue] = useState("1");
   const navigate = useNavigate();
   const [openProfileModal, setOpenProfileModal] = useState(false);
   const handleOpenProfileModal = () => setOpenProfileModal(true);
   const handleClose = () => setOpenProfileModal(false);
   const handleBack = () => navigate(-1);
+  const dispatch=useDispatch();
+  const {id}=useParams();
   const handleFollowUser = () => {
     console.log("follow user");
   };
@@ -28,6 +33,9 @@ const Profile = () => {
       console.log("user tweet");
     }
   };
+  useEffect(()=>{
+    dispatch(findUserById(id))
+  },[])
   return (
     <div>
       <section
@@ -38,14 +46,14 @@ const Profile = () => {
           onClick={handleBack}
         />
         <h1 className="py-2 !text-xl font-bold opacity-100 ml-5 ">
-          Phan Thanh Binh
+          {auth?.findUser?.fullName}
         </h1>
       </section>
 
       <section>
         <img
           className="w-[100%] h-[15rem] object-cover"
-          src="https://cdn.pixabay.com/photo/2025/03/09/08/26/bridge-9456745_640.jpg"
+          src={auth?.findUser?.backgroundImage}
           alt=""
         />
       </section>
@@ -55,7 +63,7 @@ const Profile = () => {
           <Avatar
             className="transform -translate-y-24"
             alt="Phan Thanh Binh"
-            src="https://pbs.twimg.com/profile_images/1843591782317338628/pGgFUDI9_400x400.png"
+            src={auth?.findUser?.image}
             sx={{
               width: "10rem",
               height: "10rem",
@@ -89,7 +97,7 @@ const Profile = () => {
         </div>
         <div>
           <div className="flex items-center">
-            <h1 className="m-0 font-bold !text-lg">Phan Thanh Binh</h1>
+            <h1 className="m-0 font-bold !text-lg">{auth?.findUser?.fullName}</h1>
             {true && (
               <img
                 className="ml-2 w-5 h-5"
@@ -98,25 +106,22 @@ const Profile = () => {
               />
             )}
           </div>
-          <h1 className="!text-gray-500 !text-sm">@BinhThanhPhan</h1>
+          <h1 className="!text-gray-500 !text-sm">@{auth?.findUser?.fullName?.split(" ").join("_").toLowerCase()}</h1>
         </div>
 
         <div className="mt-2 space-y-3">
           <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Esse natus
-            vitae id sit praesentium doloremque libero sunt, quae, fuga sint
-            quisquam est doloribus ratione iure. Ad repudiandae qui corrupti
-            repellat?
+            {auth?.findUser?.bio}
           </p>
           <div className="py-1 flex space-x-5">
             <div className="flex items-center text-gray-500">
               <BusinessCenterIcon />
-              <p className="ml-2 mb-0">Nong Lam University</p>
+              <p className="ml-2 mb-0">Education</p>
             </div>
 
             <div className="flex items-center text-gray-500">
               <LocationOnIcon />
-              <p className="ml-2 mb-0">VietNam</p>
+              <p className="ml-2 mb-0">{auth?.findUser?.location}</p>
             </div>
 
             <div className="flex items-center text-gray-500">
@@ -127,11 +132,11 @@ const Profile = () => {
 
           <div className="flex items-center space-x-5">
             <div className="flex items-center space-x-1 font-semibold">
-              <span>100</span>
+              <span>{auth?.findUser?.followings?.length}</span>
               <span className="text-gray-500">Following</span>
             </div>
             <div className="flex items-center space-x-1 font-semibold">
-              <span>590</span>
+              <span>{auth?.findUser?.followers?.length }</span>
               <span className="text-gray-500">Followers</span>
             </div>
           </div>

@@ -7,6 +7,10 @@ import Button from "@mui/material/Button";
 import { useFormik } from "formik";
 import { Avatar, IconButton, TextField } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { useDispatch, useSelector} from "react-redux";
+import { updateUserProfile } from "../../Store/Auth/Action";
+import { uploadToCloudinary } from "../../Utils/uploadToCloudinary";
+import { useState } from "react";
 
 const style = {
   position: "absolute",
@@ -24,9 +28,15 @@ const style = {
 
 export default function ProfileModal({open,handleClose}) {
   // const [open, setOpen] = React.useState(false);
+
+  const {auth}=useSelector((store)=>store);
   const [uploading, setUplading] = React.useState(false);
+  const dispatch=useDispatch();
+  const [selectedImage,setSelectedImage]=useState("");
   const handleSubmit = (values) => {
+    dispatch(updateUserProfile(values));
     console.log("handle submit", values);
+    setSelectedImage("");
   };
 
   const formik = useFormik({
@@ -40,11 +50,12 @@ export default function ProfileModal({open,handleClose}) {
     },
     onSubmit: handleSubmit,
   });
-  const handleImageChange = (event) => {
+  const handleImageChange = async(event) => {
     setUplading(true);
     const { name } = event.target;
-    const file = event.target.files[0];
+    const file = await uploadToCloudinary(event.target.files[0]);
     formik.setFieldValue(name, file);
+    setSelectedImage(file);
     setUplading(false);
   };
   return (
@@ -99,7 +110,7 @@ export default function ProfileModal({open,handleClose}) {
                           height: "10rem",
                           border: "4px solid white",
                         }}
-                        srx="https://pbs.twimg.com/profile_images/1843591782317338628/pGgFUDI9_400x400.png"
+                        src={selectedImage ? selectedImage : auth?.user?.image}
                       />
                       <input
                         className="absolute top-0 left-0 w-[10rem] h-full opacity-0 cursor-pointer"
