@@ -76,7 +76,7 @@ const Navigation = () => {
               variant="dot"
               invisible={!noti.haveNoti}
             >
-              <NotificationsIcon fontSize="large" />
+              <NotificationsIcon />
             </Badge>
           ) : (
             item.icon
