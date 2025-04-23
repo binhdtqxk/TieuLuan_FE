@@ -14,6 +14,7 @@ import {
   UPDATE_USER_SUCCESS,
   UPDATE_USER_FAILURE,
   FOLLOW_USER_SUCCESS,
+  FOLLOW_USER_FAILURE,
 } from "./Actiontype";
 
 export const loginUser = (loginData) => async (dispatch) => {
@@ -90,9 +91,10 @@ export const followUser = (userId) => async (dispatch) => {
     dispatch({type:FOLLOW_USER_SUCCESS,payload:data})
   } catch (error) {
     console.log("error", error);
-    dispatch({ type: FOLLOW_USER_SUCCESS, payload: error.message });
+    dispatch({ type: FOLLOW_USER_FAILURE, payload: error.message });
   }
 };
+
 
 export const logout = () => async (dispatch) => {
     localStorage.removeItem("jwt");

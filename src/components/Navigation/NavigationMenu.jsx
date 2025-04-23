@@ -21,7 +21,7 @@ export const navigation=[
     {
         title:"Notification",
         icon:<NotificationsIcon/>,
-        path:"/notification"
+        path:"/notifications"
     },
     {
         title:"Messages",

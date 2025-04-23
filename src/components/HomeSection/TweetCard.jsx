@@ -22,7 +22,7 @@ const TweetCard = ({item}) => {
     const dispatch=useDispatch();
     useEffect(()=>{
 
-    },[item?.totalReply])
+    },[item?.totalReply,item?.totalLike,item?.totalRetweets])
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };

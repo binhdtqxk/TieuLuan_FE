@@ -39,7 +39,7 @@ const Profile = () => {
   useEffect(()=>{
     dispatch(findUserById(id));
     dispatch(getUserstweet(id));
-  },[id])
+  },[id,twit])
   return (
     <div>
       <section

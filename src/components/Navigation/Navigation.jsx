@@ -1,13 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { navigation } from "./NavigationMenu";
 import { useNavigate } from "react-router-dom";
-import { Button, Avatar, Menu, MenuItem } from "@mui/material";
+import {Badge, Button, Avatar, Menu, MenuItem } from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../Store/Auth/Action";
+import { Client } from "@stomp/stompjs";
+import SockJS from "sockjs-client";
+import { clearNotificationIndicator, receiveNotification } from "../../Store/Notification/Action";
+import NotificationsIcon from '@mui/icons-material/Notifications';
 
 const Navigation = () => {
-  const { auth } = useSelector((store) => store);
+  const { auth, noti } = useSelector((store) => store);
   const dispatch= useDispatch();
   console.log(auth);
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -22,6 +26,28 @@ const Navigation = () => {
   const handleLogout = () => {
     dispatch(logout());
   };
+  useEffect(()=>{
+    const socket= new SockJS('http://localhost:3000/ws');
+    const stompClient= new Client({
+      webSocketFactory: () => socket,
+      onConnect: () => {
+        stompClient.subscribe('/topic/notifications', msg => {
+          console.log("[WS] Raw STOMP message:", msg);
+          const notification = JSON.parse(msg.body);
+          console.log("[WS] Parsed notification:", notification);
+          if(auth?.user?.id === notification?.recipient?.id){
+            dispatch(receiveNotification(notification));
+          }
+        })
+      },
+      onStompError: frame =>{
+        console.error('STOMP error: ', frame);
+      }
+    });
+    stompClient.activate();
+    return () => stompClient.deactivate();
+  },[dispatch, auth?.user?.id])
+
   return (
     <div className="h-screen sticky top-0">
       <div className="py-2">
@@ -42,27 +68,45 @@ const Navigation = () => {
         </svg>
       </div>
       <div className="space-y-6">
-        {navigation.map((item) => (
-          <div
-            className="cursor-pointer flex space-x-3 items-center 
-            text-2xl mt-1.5"
-            onClick={() =>
-              item.title === "Profile"
-                ? navigate(`/profile/${auth?.user?.id}`)
-                : navigate(item.path)
-            }
-          >
-            {item.icon}
-            <p className="text-2xl p-0 mb-0">{item.title}</p>
-          </div>
-        ))}
+      {navigation.map((item) => {
+          const isNotif = item.title === "Notification";
+          const Icon = isNotif ? (
+            <Badge
+              color="error"
+              variant="dot"
+              invisible={!noti.haveNoti}
+            >
+              <NotificationsIcon fontSize="large" />
+            </Badge>
+          ) : (
+            item.icon
+          );
+
+          return (
+            <div
+              key={item.title}
+              className="cursor-pointer flex space-x-3 items-center text-2xl mt-1.5"
+              onClick={() =>
+                isNotif
+                  ? (dispatch(clearNotificationIndicator()), navigate(item.path))
+                  : item.title === "Profile"
+                  ? navigate(`/profile/${auth?.user?.id}`)
+                  : navigate(item.path)
+              }
+            >
+              {Icon}
+              <p className="text-2xl m-0">{item.title}</p>
+            </div>
+          );
+        })}
       </div>
       <div className="py-10">
         <Button
           sx={{
             width: "100%",
             borderRadius: "29px",
-            py: "15px",
+            py:"10px",
+            mb:"15px",
             bgcolor: "#1e88e5",
           }}
           variant="contained"

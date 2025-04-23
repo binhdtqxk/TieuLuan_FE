@@ -46,7 +46,7 @@ export const twitReducer = (state = initialState, action) => {
     case LIKE_TWEET_FAILURE:
     case RETWEET_FAILURE:
     case FIND_TWEET_BY_ID_FAILURE:
-      return { ...state, loading: false, error: action, payload };
+      return { ...state, loading: false, error: action.payload };
 
     case TWEET_CREATE_SUCCESS:
       return {
