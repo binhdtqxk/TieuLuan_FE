@@ -30,6 +30,9 @@ const Navigation = () => {
     const socket= new SockJS('http://localhost:3000/ws');
     const stompClient= new Client({
       webSocketFactory: () => socket,
+      connectHeaders: {
+        Authorization: "Bearer " + localStorage.getItem("jwt")
+      },
       onConnect: () => {
         stompClient.subscribe('/topic/notifications', msg => {
           console.log("[WS] Raw STOMP message:", msg);

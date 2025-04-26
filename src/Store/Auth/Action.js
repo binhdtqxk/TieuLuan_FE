@@ -67,9 +67,11 @@ export const findUserById = (userId) => async (dispatch) => {
     const { data } = await api.get(`${API_BASE_URL}/api/users/${userId}`);
     console.log("find user by id: ",data)
     dispatch({type:FIND_USER_BY_ID_SUCCESS,payload:data});
+    return data; 
   } catch (error) {
     console.log("error", error);
     dispatch({ type: FIND_USER_BY_ID_FAILURE, payload: error.message });
+    throw error;
   }
 };
 
