@@ -61,25 +61,42 @@ const DirrectMessage = () => {
 
   useEffect(() => {
     if (!auth.user?.id) return;
-
-    const subscription = subscribe(
-      `/user/queue/message`,
-      ({ body }) => {
-        const newMsg = JSON.parse(body);
-        console.log("subscribe roi")
-        if (newMsg.recipient.id === auth?.user?.id) {
-          dispatch({
-            type: "GET_CONVERSATION_MESSAGES",
-            payload: [...currentConversation, newMsg]
-          });
-        }
-      }
-    );
-
-    return () => {
-      if (subscription) subscription.unsubscribe();
-    };
-  }, [auth.user?.id, currentRecipient?.id, currentConversation, dispatch, subscribe]);
+  
+    const client = new Client({
+      webSocketFactory: () => new SockJS("http://localhost:3000/ws"),
+      connectHeaders: { Authorization: "Bearer " + localStorage.getItem("jwt") },
+      heartbeatIncoming: 10000,
+      heartbeatOutgoing: 10000,
+      reconnectDelay: 5000,
+      onConnect: () => {
+        console.log("STOMP connected");
+        client.subscribe(
+          "/user/queue/message",   // subscribe đúng vào /user/queue/message
+          ({ body }) => {
+            console.log("Received message:", body);  // log message để xem nội dung
+            const newMessage = JSON.parse(body);
+            console.log("Parsed message:", newMessage);  // Kiểm tra thông tin đã được parse đúng
+  
+            if (newMessage.recipient?.id === auth.user?.id) {
+              console.log("Message is for me! Updating conversation.");
+              dispatch({
+                type: "GET_CONVERSATION_MESSAGES",
+                payload: [...currentConversation, newMessage],
+              });
+            } else {
+              console.log("Message is not for me, ignoring.");
+            }
+          }
+        );
+      },
+      onStompError: frame => {
+        console.error("STOMP error:", frame);
+      },
+    });
+  
+    client.activate();
+    return () => client.deactivate();
+  }, [auth.user?.id, currentConversation, dispatch]);
 
   // 4. Gửi tin nhắn
   const handleSendMessage = () => {
