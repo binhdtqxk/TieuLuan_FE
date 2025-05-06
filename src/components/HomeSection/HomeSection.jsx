@@ -10,6 +10,7 @@ import TweetCard from "./TweetCard";
 import { useDispatch, useSelector } from "react-redux";
 import { createTweet, getAllTweets } from "../../Store/twit/Action";
 import { uploadToCloudinary } from "../../Utils/uploadToCloudinary";
+import LocationModal from "../LocationModal/LocationModal";
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("Tweet text is required"),
 });
@@ -17,6 +18,8 @@ const validationSchema = Yup.object().shape({
 const HomeSection = () => {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
+  const [locationModalOpen, setLocationModalOpen] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState(null);
   const dispatch = useDispatch();
   const { twit } = useSelector((store) => store);
   console.log("twit", twit);
@@ -34,6 +37,7 @@ const HomeSection = () => {
     initialValues: {
       content: "",
       image: "",
+      location: null,
       isTweet:true,
     },
     onSubmit: handleSubmit,
@@ -45,6 +49,13 @@ const HomeSection = () => {
     formik.setFieldValue("image", imgUrl);
     setSelectedImage(imgUrl);
     setUploadingImage(false);
+  };
+  const handleLocationClick = () => {
+    setLocationModalOpen(true);
+  };
+  const handleLocationSelect = (location) => {
+    setSelectedLocation(location);
+    formik.setFieldValue("location", location);
   };
   return (
     <div className="space-y-5">
@@ -75,9 +86,13 @@ const HomeSection = () => {
                 {formik.errors.content && formik.touched.content && (
                   <span className="text-red-500">{formik.errors.content}</span>
                 )}
-                {/* </div>
-                            <img src="" alt="" />
-                            <div> */}
+
+                {selectedLocation && (
+                  <div className="flex items-center mt-2 text-[#1d9bf0] text-sm">
+                    <FmdGoodIcon fontSize="small" className="mr-1" />
+                    <span>{selectedLocation.name}</span>
+                  </div>
+                )}
                 <div className="flex justify-between items-center mt-5">
                   <div className="flex space-x-5 items-center">
                     <label className="flex items-center space-x-2 rounded-md cursor-pointer">
@@ -89,7 +104,9 @@ const HomeSection = () => {
                         onChange={handleSelectImage}
                       />
                     </label>
-                    <FmdGoodIcon className="text-[#1d9bf0]" />
+                    <div className="cursor-pointer" onClick={handleLocationClick}>
+                      <FmdGoodIcon className="text-[#1d9bf0]" />
+                    </div>
                     <TagFacesIcon className="text-[#1d9bf0]" />
                   </div>
 
@@ -115,6 +132,12 @@ const HomeSection = () => {
           </div>
         </div>
       </section>
+      <LocationModal 
+        open={locationModalOpen}
+        onClose={() => setLocationModalOpen(false)}
+        onSelectLocation={handleLocationSelect}
+        selectedLocation={selectedLocation}
+      />
       <section>
         {twit.twits.map((item) => (
           <TweetCard item={item} />
