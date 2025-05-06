@@ -22,6 +22,7 @@ const HomeSection = () => {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const dispatch = useDispatch();
   const { twit } = useSelector((store) => store);
+  const {auth}= useSelector((auth)=>auth);
   console.log("twit", twit);
 
   const handleSubmit = (values,actions) => {
@@ -55,7 +56,8 @@ const HomeSection = () => {
   };
   const handleLocationSelect = (location) => {
     setSelectedLocation(location);
-    formik.setFieldValue("location", location);
+    formik.setFieldValue("location", location.name);
+    console.log(selectedLocation);
   };
   return (
     <div className="space-y-5">
@@ -71,7 +73,7 @@ const HomeSection = () => {
         <div className="flex space-x-5">
           <Avatar
             alt="username"
-            src="https://pbs.twimg.com/profile_images/1843591782317338628/pGgFUDI9_400x400.png"
+            src={auth?.user?.image}
           />
           <div className="w-full">
             <form onSubmit={formik.handleSubmit}>

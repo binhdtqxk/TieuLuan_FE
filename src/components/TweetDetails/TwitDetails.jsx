@@ -9,15 +9,26 @@ import { findTwitsById } from "../../Store/twit/Action";
 const TwitDetails = () => {
   const navigate = useNavigate();
   const handleBack = () => navigate(-1);
-  const dispatch=useDispatch();
-  const {id}=useParams()
-  const {twit}=useSelector(store=>store);
+  const dispatch = useDispatch();
+  const { id } = useParams();
+  const { twit } = useSelector((store) => store);
+  const date = new Date(twit.twit.createdAt.split('.')[0] + 'Z');
+  const options = { 
+    hour: 'numeric', 
+    minute: 'numeric', 
+    hour12: true, 
+    month: 'short', 
+    day: 'numeric', 
+    year: 'numeric',
+  };
+  const formatted = date.toLocaleString('en-US', options)
+  const finalFormatted = formatted.replace(', ', ',');
 
-  useEffect(()=>{
-    if(id){
-      dispatch(findTwitsById(id))
+  useEffect(() => {
+    if (id) {
+      dispatch(findTwitsById(id));
     }
-  },[])
+  }, []);
   return (
     <React.Fragment>
       <section
@@ -31,12 +42,16 @@ const TwitDetails = () => {
       </section>
 
       <section>
-        <TweetCard item={twit.twit}/>
-        <Divider sx={{margin:"2rem 0rem",}}/>
+        <TweetCard item={twit.twit} />
+        <span className="ml-0.5 !text-stone-600">{finalFormatted}</span>
+        {twit?.twit?.location ? <span className="ml-0.5 !text-stone-600"> from {twit?.twit?.location}</span>: <span/>}
+        <Divider sx={{ margin: "2rem 0rem" }} />
       </section>
 
       <section>
-        {twit?.twit?.replyTwits?.map((item)=><TweetCard item={item}/>)}
+        {twit?.twit?.replyTwits?.map((item) => (
+          <TweetCard item={item} />
+        ))}
       </section>
     </React.Fragment>
   );
