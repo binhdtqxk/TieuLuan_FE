@@ -39,7 +39,7 @@ const Profile = () => {
   useEffect(()=>{
     dispatch(findUserById(id));
     dispatch(getUserstweet(id));
-  },[id,twit])
+  },[id,dispatch])
   return (
     <div>
       <section
@@ -163,7 +163,7 @@ const Profile = () => {
             </Box>
             <TabPanel value="1">
               {twit.twits.map((item) => (
-                <TweetCard item={item}/>
+                <TweetCard key={item.id} item={item}/>
               ))}
             </TabPanel>
             <TabPanel value="2">User Replies</TabPanel>

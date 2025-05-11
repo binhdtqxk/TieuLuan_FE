@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { navigation } from "./NavigationMenu";
+import { adminNavigation, navigation } from "./NavigationMenu";
 import { useNavigate } from "react-router-dom";
 import {Badge, Button, Avatar, Menu, MenuItem } from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
@@ -13,7 +13,6 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 const Navigation = () => {
   const { auth, noti } = useSelector((store) => store);
   const dispatch= useDispatch();
-  console.log(auth);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -26,6 +25,10 @@ const Navigation = () => {
   const handleLogout = () => {
     dispatch(logout());
   };
+  
+  // Check if user has admin role
+  const isAdmin = auth?.user?.role?.role === 'ROLE_ADMIN';
+
   useEffect(()=>{
     const socket= new SockJS('http://localhost:3000/ws');
     const stompClient= new Client({
@@ -59,7 +62,7 @@ const Navigation = () => {
           width={30}
           viewBox="0 0 24 24"
           aria-hidden="true"
-          class="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-1nao33i r-rxcuwo r-1777fci
+          className="r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-lrvibr r-m6rgpd r-1nao33i r-rxcuwo r-1777fci
             r-m327ed r-494qqr"
         >
           <g>
@@ -102,6 +105,18 @@ const Navigation = () => {
             </div>
           );
         })}
+
+        {/* Render admin navigation if user has admin role */}
+        {isAdmin && adminNavigation.map((item) => (
+          <div
+            key={item.title}
+            className="cursor-pointer flex space-x-3 items-center text-2xl mt-1.5"
+            onClick={() => navigate(item.path)}
+          >
+            {item.icon}
+            <p className="text-2xl m-0">{item.title}</p>
+          </div>
+        ))}
       </div>
       <div className="py-10">
         <Button
