@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Button,
   Grid,
@@ -11,8 +11,13 @@ import {
 import { blue } from "@mui/material/colors";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useDispatch } from "react-redux";
-import { registerUser } from "../../Store/Auth/Action";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  checkEmailExisted,
+  registerUser,
+  sendVerificationCode,
+} from "../../Store/Auth/Action";
+import VerificationModal from "./VerificationModal";
 const validationSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Email is Required"),
   password: Yup.string().required("Password is required"),
@@ -25,7 +30,13 @@ const months = [
   { value: 2, label: "February" },
 ];
 const SignupForm = () => {
-  const dispatch=useDispatch();
+  const { auth } = useSelector((state) => state);
+  const dispatch = useDispatch();
+  const [openVerificationModal, setOpenVerificationModal] = useState(false);
+  const [verificationCode, setVerificationCode] = useState("");
+  const [serverCode, setServerCode] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [emailError, setEmailError] = useState("");
   const formik = useFormik({
     initialValues: {
       fullName: "",
@@ -39,12 +50,17 @@ const SignupForm = () => {
     },
     validationSchema,
     onSubmit: (values) => {
-      const { day, month, year } = values.dateOfBirth;
-      const dateOfBirth = `${year}-${month}-${day}`;
-      values.dateOfBirth = dateOfBirth;
-
-      dispatch(registerUser(values));
-      console.log("form value ", values);
+      setLoading(true);
+      setEmailError("");
+      dispatch(checkEmailExisted(values.email));
+      if (auth.checkEmailExisted) {
+        setEmailError("Email is already used with another account");
+        setLoading(false);
+        return;
+      }
+      dispatch(sendVerificationCode(values.email));
+      setOpenVerificationModal(true);
+      setLoading(false);
     },
   });
 
@@ -54,113 +70,161 @@ const SignupForm = () => {
       [name]: event.target.value,
     });
   };
+  const handleVerificationSubmit = () => {
+    console.log("input: "+verificationCode);
+    console.log("auth code: "+auth.verificationCode);
+    if (verificationCode == auth.verificationCode) {
+      const { day, month, year } = formik.values.dateOfBirth;
+      const dateOfBirth = `${year}-${month}-${day}`;
+
+      const registrationData = {
+        ...formik.values,
+        dateOfBirth,
+      };
+
+      dispatch(registerUser(registrationData));
+
+      setOpenVerificationModal(false);
+    } else {
+      alert("Incorrect verification code. Please try again.");
+    }
+  };
+  const handleResendCode = async () => {
+    setLoading(true);
+    try {
+      dispatch(sendVerificationCode(formik.values.email));
+      alert("Verification code has been resent to your email.");
+    } catch (error) {
+      console.error("Error resending code", error);
+      alert("Failed to resend verification code. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
-    <form onSubmit={formik.handleSubmit}>
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            label="full name"
-            name="fullName"
-            variant="outlined"
-            size="large"
-            value={formik.values.fullName}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.fullName && Boolean(formik.errors.fullName)}
-            helperText={formik.touched.fullName && formik.errors.fullName}
-          />
+    <>
+      <form onSubmit={formik.handleSubmit}>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label="full name"
+              name="fullName"
+              variant="outlined"
+              size="large"
+              value={formik.values.fullName}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.fullName && Boolean(formik.errors.fullName)}
+              helperText={formik.touched.fullName && formik.errors.fullName}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label="Email"
+              name="email"
+              variant="outlined"
+              size="large"
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.email && Boolean(formik.errors.email)}
+              helperText={formik.touched.email && formik.errors.email}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label="Password"
+              name="password"
+              variant="outlined"
+              size="large"
+              type="password"
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.password && Boolean(formik.errors.password)}
+              helperText={formik.touched.password && formik.errors.password}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <InputLabel>Date</InputLabel>
+            <Select
+              name="day"
+              value={formik.values.dateOfBirth.day}
+              onChange={handleDateChange("day")}
+              onBlur={formik.handleBlur}
+              fullWidth
+            >
+              {days.map((day) => (
+                <MenuItem key={day} value={day}>
+                  {day}
+                </MenuItem>
+              ))}
+            </Select>
+          </Grid>
+          <Grid item xs={4}>
+            <InputLabel>Month</InputLabel>
+            <Select
+              name="month"
+              value={formik.values.dateOfBirth.month}
+              onChange={handleDateChange("month")}
+              onBlur={formik.handleBlur}
+              fullWidth
+            >
+              {months.map((month) => (
+                <MenuItem key={month.label} value={month.value}>
+                  {month.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </Grid>
+          <Grid item xs={4}>
+            <InputLabel>Year</InputLabel>
+            <Select
+              name="year"
+              value={formik.values.dateOfBirth.year}
+              onChange={handleDateChange("year")}
+              onBlur={formik.handleBlur}
+              fullWidth
+            >
+              {years.map((year) => (
+                <MenuItem key={year} value={year}>
+                  {year}
+                </MenuItem>
+              ))}
+            </Select>
+          </Grid>
+          <Grid className="mt-20" item xs={12}>
+            <Button
+              sx={{ borderRadius: "29px", py: "15px", bgcolor: blue[500] }}
+              type="submit"
+              fullWidth
+              variant="contained"
+              size="large"
+              disabled={loading}
+            >
+              {loading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                "Sign up"
+              )}
+            </Button>
+          </Grid>
         </Grid>
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            label="Email"
-            name="email"
-            variant="outlined"
-            size="large"
-            value={formik.values.email}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.email && Boolean(formik.errors.email)}
-            helperText={formik.touched.email && formik.errors.email}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            label="Password"
-            name="password"
-            variant="outlined"
-            size="large"
-            type="password"
-            value={formik.values.password}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.password && Boolean(formik.errors.password)}
-            helperText={formik.touched.password && formik.errors.password}
-          />
-        </Grid>
-        <Grid item xs={4}>
-          <InputLabel>Date</InputLabel>
-          <Select
-            name="day"
-            value={formik.values.dateOfBirth.day}
-            onChange={handleDateChange("day")}
-            onBlur={formik.handleBlur}
-            fullWidth
-          >
-            {days.map((day) => (
-              <MenuItem key={day} value={day}>
-                {day}
-              </MenuItem>
-            ))}
-          </Select>
-        </Grid>
-        <Grid item xs={4}>
-          <InputLabel>Month</InputLabel>
-          <Select
-            name="month"
-            value={formik.values.dateOfBirth.month}
-            onChange={handleDateChange("month")}
-            onBlur={formik.handleBlur}
-            fullWidth
-          >
-            {months.map((month) => (
-              <MenuItem key={month.label} value={month.value}>
-                {month.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </Grid>
-        <Grid item xs={4}>
-          <InputLabel>Year</InputLabel>
-          <Select
-            name="year"
-            value={formik.values.dateOfBirth.year}
-            onChange={handleDateChange("year")}
-            onBlur={formik.handleBlur}
-            fullWidth
-          >
-            {years.map((year) => (
-              <MenuItem key={year} value={year}>
-                {year}
-              </MenuItem>
-            ))}
-          </Select>
-        </Grid>
-        <Grid className="mt-20" item xs={12}>
-          <Button
-            sx={{ borderRadius: "29px", py: "15px", bgcolor: blue[500] }}
-            type="submit"
-            fullWidth
-            variant="contained"
-            size="large"
-          >
-            signup
-          </Button>
-        </Grid>
-      </Grid>
-    </form>
+      </form>
+      <VerificationModal
+        open={openVerificationModal}
+        onClose={() => setOpenVerificationModal(false)}
+        email={formik.values.email}
+        verificationCode={verificationCode}
+        onChange={setVerificationCode}
+        onResend={handleResendCode}
+        onVerify={handleVerificationSubmit}
+        loading={loading}
+      />
+    </>
   );
 };
 

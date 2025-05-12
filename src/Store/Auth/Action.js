@@ -15,6 +15,10 @@ import {
   UPDATE_USER_FAILURE,
   FOLLOW_USER_SUCCESS,
   FOLLOW_USER_FAILURE,
+  CHECK_EMAIL_EXISTED_SUCCESS,
+  CHECK_EMAIL_EXISTED_FAILURE,
+  SEND_EMAIL_VERIFICATION_SUCCESS,
+  SEND_EMAIL_VERIFICATION_FAILURE,
 } from "./Actiontype";
 
 export const loginUser = (loginData) => async (dispatch) => {
@@ -103,3 +107,39 @@ export const logout = () => async (dispatch) => {
     dispatch({ type: LOGOUT, payload:null});
   
 };
+export const checkEmailExisted=(email)=>async(dispatch) =>{
+  try {
+    const data = await axios.post(
+      `${API_BASE_URL}/auth/check-email`,
+      email, 
+      {
+        headers: {
+          'Content-Type': 'text/plain'
+        }
+      }
+    );
+    console.log("check email existed: " +data)
+    dispatch({type:CHECK_EMAIL_EXISTED_SUCCESS,payload:data})
+  } catch (error) {
+    console.log("error "+error);
+    dispatch({type:CHECK_EMAIL_EXISTED_FAILURE,payload:error})
+  }
+};
+export const sendVerificationCode=(email)=>async(dispatch)=>{
+  try {
+    const { data } = await axios.post(
+      `${API_BASE_URL}/auth/sendVerificationCode`,
+      email, 
+      {
+        headers: {
+          'Content-Type': 'text/plain'
+        }
+      }
+    );
+    console.log("code: "+data);
+    dispatch({type:SEND_EMAIL_VERIFICATION_SUCCESS,payload:data})
+  } catch (error) {
+    console.log("error: "+error);
+    dispatch({type:SEND_EMAIL_VERIFICATION_FAILURE,payload:error})
+  }
+}

@@ -12,6 +12,10 @@ import {
   FIND_USER_BY_ID_SUCCESS,
   FOLLOW_USER_SUCCESS,
   UPDATE_USER_SUCCESS,
+  CHECK_EMAIL_EXISTED_SUCCESS,
+  CHECK_EMAIL_EXISTED_FAILURE,
+  SEND_EMAIL_VERIFICATION_SUCCESS,
+  SEND_EMAIL_VERIFICATION_FAILURE,
 } from "./Actiontype";
 
 const initialState = {
@@ -56,10 +60,24 @@ export const authReducer = (state = initialState, action) => {
     case LOGIN_USER_FAILURE:
     case REGISTER_USER_FAILURE:
     case GET_USER_PROFILE_FAILURE:
+    case CHECK_EMAIL_EXISTED_FAILURE:
+    case SEND_EMAIL_VERIFICATION_FAILURE:
       return {
         ...state,
         loading: false,
         error: action.payload,
+      };
+    case CHECK_EMAIL_EXISTED_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        emailExisted: action.payload,
+      };
+    case SEND_EMAIL_VERIFICATION_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        verificationCode: action.payload,
       };
     default:
       return state;
