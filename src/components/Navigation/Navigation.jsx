@@ -1,20 +1,27 @@
 import React, { useEffect } from "react";
 import { adminNavigation, navigation } from "./NavigationMenu";
 import { useNavigate } from "react-router-dom";
-import {Badge, Button, Avatar, Menu, MenuItem } from "@mui/material";
+import { Badge, Button, Avatar, Menu, MenuItem } from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../Store/Auth/Action";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
-import { clearNotificationIndicator, receiveNotification } from "../../Store/Notification/Action";
-import NotificationsIcon from '@mui/icons-material/Notifications';
+import {
+  clearNotificationIndicator,
+  receiveNotification,
+} from "../../Store/Notification/Action";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import MoreMenu from "../Authentication/MoreMenu";
+import { useState } from "react";
 
 const Navigation = () => {
   const { auth, noti } = useSelector((store) => store);
-  const dispatch= useDispatch();
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const dispatch = useDispatch();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [moreMenuAnchorEl, setMoreMenuAnchorEl] = useState(null); 
   const open = Boolean(anchorEl);
+  const moreMenuOpen = Boolean(moreMenuAnchorEl); 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -25,34 +32,41 @@ const Navigation = () => {
   const handleLogout = () => {
     dispatch(logout());
   };
-  
-  // Check if user has admin role
-  const isAdmin = auth?.user?.role?.role === 'ROLE_ADMIN';
+  const handleMoreClick = (event) => {
+    setMoreMenuAnchorEl(event.currentTarget);
+  };
 
-  useEffect(()=>{
-    const socket= new SockJS('http://localhost:3000/ws');
-    const stompClient= new Client({
+  const handleMoreMenuClose = () => {
+    setMoreMenuAnchorEl(null);
+  };
+
+  // Check if user has admin role
+  const isAdmin = auth?.user?.role?.role === "ROLE_ADMIN";
+
+  useEffect(() => {
+    const socket = new SockJS("http://localhost:3000/ws");
+    const stompClient = new Client({
       webSocketFactory: () => socket,
       connectHeaders: {
-        Authorization: "Bearer " + localStorage.getItem("jwt")
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
       },
       onConnect: () => {
-        stompClient.subscribe('/topic/notifications', msg => {
+        stompClient.subscribe("/topic/notifications", (msg) => {
           console.log("[WS] Raw STOMP message:", msg);
           const notification = JSON.parse(msg.body);
           console.log("[WS] Parsed notification:", notification);
-          if(auth?.user?.id === notification?.recipient?.id){
+          if (auth?.user?.id === notification?.recipient?.id) {
             dispatch(receiveNotification(notification));
           }
-        })
+        });
       },
-      onStompError: frame =>{
-        console.error('STOMP error: ', frame);
-      }
+      onStompError: (frame) => {
+        console.error("STOMP error: ", frame);
+      },
     });
     stompClient.activate();
     return () => stompClient.deactivate();
-  },[dispatch, auth?.user?.id])
+  }, [dispatch, auth?.user?.id]);
 
   return (
     <div className="h-screen sticky top-0">
@@ -74,14 +88,22 @@ const Navigation = () => {
         </svg>
       </div>
       <div className="space-y-6">
-      {navigation.map((item) => {
+        {navigation.map((item) => {
+          if (item.title === "More") {
+            return (
+              <div
+                key={item.title}
+                className="cursor-pointer flex space-x-3 items-center text-2xl mt-1.5"
+                onClick={handleMoreClick} // Use our custom More handler
+              >
+                {item.icon}
+                <p className="text-2xl m-0">{item.title}</p>
+              </div>
+            );
+          }
           const isNotif = item.title === "Notification";
           const Icon = isNotif ? (
-            <Badge
-              color="error"
-              variant="dot"
-              invisible={!noti.haveNoti}
-            >
+            <Badge color="error" variant="dot" invisible={!noti.haveNoti}>
               <NotificationsIcon />
             </Badge>
           ) : (
@@ -94,7 +116,8 @@ const Navigation = () => {
               className="cursor-pointer flex space-x-3 items-center text-2xl mt-1.5"
               onClick={() =>
                 isNotif
-                  ? (dispatch(clearNotificationIndicator()), navigate(item.path))
+                  ? (dispatch(clearNotificationIndicator()),
+                    navigate(item.path))
                   : item.title === "Profile"
                   ? navigate(`/profile/${auth?.user?.id}`)
                   : navigate(item.path)
@@ -107,24 +130,25 @@ const Navigation = () => {
         })}
 
         {/* Render admin navigation if user has admin role */}
-        {isAdmin && adminNavigation.map((item) => (
-          <div
-            key={item.title}
-            className="cursor-pointer flex space-x-3 items-center text-2xl mt-1.5"
-            onClick={() => navigate(item.path)}
-          >
-            {item.icon}
-            <p className="text-2xl m-0">{item.title}</p>
-          </div>
-        ))}
+        {isAdmin &&
+          adminNavigation.map((item) => (
+            <div
+              key={item.title}
+              className="cursor-pointer flex space-x-3 items-center text-2xl mt-1.5"
+              onClick={() => navigate(item.path)}
+            >
+              {item.icon}
+              <p className="text-2xl m-0">{item.title}</p>
+            </div>
+          ))}
       </div>
       <div className="py-10">
         <Button
           sx={{
             width: "100%",
             borderRadius: "29px",
-            py:"10px",
-            mb:"15px",
+            py: "10px",
+            mb: "15px",
             bgcolor: "#1e88e5",
           }}
           variant="contained"
@@ -134,14 +158,13 @@ const Navigation = () => {
       </div>
       <div className="flex items-center justify-between">
         <div className="items-center space-x-3">
-          <Avatar
-            alt="username"
-            src={auth?.user?.image}
-          />
+          <Avatar alt="username" src={auth?.user?.image} />
         </div>
         <div>
           <span>{auth.user?.fullName}</span>
-          <span className="opacity-70">@{auth.user?.fullName?.split(" ").join("_").toLowerCase()}</span>
+          <span className="opacity-70">
+            @{auth.user?.fullName?.split(" ").join("_").toLowerCase()}
+          </span>
         </div>
         <Button
           id="basic-button"
@@ -163,6 +186,11 @@ const Navigation = () => {
         >
           <MenuItem onClick={handleLogout}>Logout</MenuItem>
         </Menu>
+        <MoreMenu 
+          anchorEl={moreMenuAnchorEl}
+          open={moreMenuOpen}
+          handleClose={handleMoreMenuClose}
+        />
       </div>
     </div>
   );

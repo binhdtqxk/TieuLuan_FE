@@ -19,6 +19,9 @@ import {
   CHECK_EMAIL_EXISTED_FAILURE,
   SEND_EMAIL_VERIFICATION_SUCCESS,
   SEND_EMAIL_VERIFICATION_FAILURE,
+  CHANGE_PASSWORD_SUCCESS,
+  CHANGE_PASSWORD_FAILURE,
+  CHANGE_PASSWORD_REQUEST,
 } from "./Actiontype";
 
 export const loginUser = (loginData) => async (dispatch) => {
@@ -136,10 +139,32 @@ export const sendVerificationCode=(email)=>async(dispatch)=>{
         }
       }
     );
-    console.log("code: "+data);
     dispatch({type:SEND_EMAIL_VERIFICATION_SUCCESS,payload:data})
   } catch (error) {
     console.log("error: "+error);
     dispatch({type:SEND_EMAIL_VERIFICATION_FAILURE,payload:error})
   }
-}
+};
+export const changePassword = (passwordData) => async (dispatch) => {
+  try {
+    dispatch({ type: CHANGE_PASSWORD_REQUEST });
+    
+    const { data } = await api.put("api/users/password", passwordData);
+    
+    dispatch({ 
+      type: CHANGE_PASSWORD_SUCCESS, 
+      payload: data 
+    });
+    
+    return data;
+  } catch (error) {
+    console.error("Error changing password:", error);
+    
+    dispatch({ 
+      type: CHANGE_PASSWORD_FAILURE, 
+      payload: error.response?.data?.message || "Password change failed" 
+    });
+    
+    throw error;
+  }
+};

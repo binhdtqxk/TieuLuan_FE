@@ -16,6 +16,9 @@ import {
   CHECK_EMAIL_EXISTED_FAILURE,
   SEND_EMAIL_VERIFICATION_SUCCESS,
   SEND_EMAIL_VERIFICATION_FAILURE,
+  CHANGE_PASSWORD_FAILURE,
+  CHANGE_PASSWORD_SUCCESS,
+  CHANGE_PASSWORD_REQUEST,
 } from "./Actiontype";
 
 const initialState = {
@@ -78,6 +81,39 @@ export const authReducer = (state = initialState, action) => {
         ...state,
         loading: false,
         verificationCode: action.payload,
+      };
+    case CHANGE_PASSWORD_SUCCESS:
+      return {
+        ...state,
+        user: action.payload,
+        loading: {
+          ...state.loading,
+          changePassword: false,
+        },
+      };
+    case CHANGE_PASSWORD_REQUEST:
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          changePassword: true,
+        },
+        error: {
+          ...state.error,
+          changePassword: null,
+        },
+      };
+    case CHANGE_PASSWORD_FAILURE:
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          changePassword: false,
+        },
+        error: {
+          ...state.error,
+          changePassword: action.payload,
+        },
       };
     default:
       return state;
