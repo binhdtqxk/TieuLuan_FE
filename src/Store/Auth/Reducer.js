@@ -19,6 +19,9 @@ import {
   CHANGE_PASSWORD_FAILURE,
   CHANGE_PASSWORD_SUCCESS,
   CHANGE_PASSWORD_REQUEST,
+  FORGOT_PASSWORD_SUCCESS,
+  FORGOT_PASSWORD_REQUEST,
+  FORGOT_PASSWORD_FAILURE,
 } from "./Actiontype";
 
 const initialState = {
@@ -113,6 +116,39 @@ export const authReducer = (state = initialState, action) => {
         error: {
           ...state.error,
           changePassword: action.payload,
+        },
+      };
+    case FORGOT_PASSWORD_SUCCESS:
+      return {
+        ...state,
+        user: action.payload,
+        loading: {
+          ...state.loading,
+          forgotPassword: false,
+        },
+      };
+    case FORGOT_PASSWORD_REQUEST:
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          forgotPassword: true,
+        },
+        error: {
+          ...state.error,
+          forgotPassword: null,
+        },
+      };
+    case FORGOT_PASSWORD_FAILURE:
+      return {
+        ...state,
+        loading: {
+          ...state.loading,
+          forgotPassword: false,
+        },
+        error: {
+          ...state.error,
+          forgotPassword: action.payload,
         },
       };
     default:

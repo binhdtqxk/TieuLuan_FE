@@ -53,22 +53,22 @@ const PasswordChange = () => {
       setError(null);
       
       try {
-        // Extract only the fields needed for the API
+
         const passwordData = {
           currentPassword: values.currentPassword,
           newPassword: values.newPassword
         };
         
-        // Dispatch action to change password
+
         await dispatch(changePassword(passwordData));
         
-        // Show success message
+
         setSuccess(true);
         
-        // Reset form
+
         formik.resetForm();
         
-        // Navigate back after short delay
+
         setTimeout(() => {
           navigate(-1);
         }, 2000);
