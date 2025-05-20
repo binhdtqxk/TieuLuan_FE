@@ -7,6 +7,7 @@ import GroupIcon from '@mui/icons-material/Group';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import PendingIcon from '@mui/icons-material/Pending';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 export const navigation=[
     {
         title:"Home",
@@ -16,12 +17,12 @@ export const navigation=[
     {
         title:"Explore",
         icon:<ExploreIcon/>,
-        path:"/explore"
+        path:"/Explore"
     },
     {
         title:"Notification",
         icon:<NotificationsIcon/>,
-        path:"/notification"
+        path:"/notifications"
     },
     {
         title:"Messages",
@@ -53,5 +54,12 @@ export const navigation=[
         icon:<PendingIcon/>,
         path:"/more"
     }
+];
 
-]
+export const adminNavigation = [
+    {
+        title:"Admin Dashboard",
+        icon:<AdminPanelSettingsIcon/>,
+        path:"/admin"
+    }
+];
