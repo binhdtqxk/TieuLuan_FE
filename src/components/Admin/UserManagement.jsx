@@ -96,7 +96,7 @@ const UserManagement = () => {
 
   // Check if a user is banned based on verification status
   const isUserBanned = (user) => {
-    if (!user.status && user.role?.role === 'ROLE_USER') {
+    if (user.status && user.role?.role === 'ROLE_USER') {
       return true;
     }
     return false;

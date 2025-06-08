@@ -3,6 +3,12 @@ import {
   FIND_TWEET_BY_ID_REQUEST,
   FIND_TWEET_BY_ID_SUCCESS,
   GET_ALL_TWEETS_SUCCESS,
+  GET_USER_LIKED_TWIT_FAILURE,
+  GET_USER_LIKED_TWIT_REQUEST,
+  GET_USER_LIKED_TWIT_SUCCESS,
+  GET_USER_REPLIED_TWIT_FAILURE,
+  GET_USER_REPLIED_TWIT_REQUEST,
+  GET_USER_REPLIED_TWIT_SUCCESS,
   GET_USERS_TWEET_SUCCESS,
   LIKE_TWEET_FAILURE,
   LIKE_TWEET_REQUEST,
@@ -29,6 +35,8 @@ const initialState = {
   error: null,
   twits: [],
   twit: null,
+  likedTwits:[],
+  repliedTwits:[],
 };
 export const twitReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -38,6 +46,8 @@ export const twitReducer = (state = initialState, action) => {
     case LIKE_TWEET_REQUEST:
     case RETWEET_REQUEST:
     case FIND_TWEET_BY_ID_REQUEST:
+    case GET_USER_LIKED_TWIT_REQUEST:
+    case GET_USER_REPLIED_TWIT_REQUEST:
       return { ...state, loading: true, error: null };
 
     case TWEET_CREATE_FAILURE:
@@ -46,6 +56,8 @@ export const twitReducer = (state = initialState, action) => {
     case LIKE_TWEET_FAILURE:
     case RETWEET_FAILURE:
     case FIND_TWEET_BY_ID_FAILURE:
+    case GET_USER_LIKED_TWIT_FAILURE:
+    case GET_USER_REPLIED_TWIT_FAILURE:
       return { ...state, loading: false, error: action.payload };
 
     case TWEET_CREATE_SUCCESS:
@@ -106,6 +118,20 @@ export const twitReducer = (state = initialState, action) => {
         error: null,
         twit: action.payload,
       };
+    case GET_USER_LIKED_TWIT_SUCCESS:
+      return{
+         ...state,
+        loading: false,
+        error: null,
+        likedTwits: action.payload,
+      }
+      case GET_USER_REPLIED_TWIT_SUCCESS:
+      return{
+         ...state,
+        loading: false,
+        error: null,
+        repliedTwits: action.payload,
+      }
     default:
       return state;
   }

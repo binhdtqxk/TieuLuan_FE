@@ -34,10 +34,6 @@ const MoreMenu = ({ anchorEl, open, handleClose }) => {
         <AccountCircleIcon fontSize="small" />
         Your account
       </MenuItem>
-      <MenuItem onClick={handleChangePassword} sx={{ display: "flex", gap: 1 }}>
-        <LockIcon fontSize="small" />
-        Change your password
-      </MenuItem>
     </Menu>
   );
 };

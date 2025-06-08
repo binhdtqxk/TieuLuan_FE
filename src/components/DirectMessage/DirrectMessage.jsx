@@ -26,7 +26,7 @@ import {
   getConversations,
   sendMessage,
 } from "../../Store/Message/Action";
-import { findUserById } from "../../Store/Auth/Action";
+import { findUserById, getUser } from "../../Store/Auth/Action";
 import { useStomp } from "../../contexts/WebSocketContext";
 
 const DirrectMessage = () => {
@@ -48,6 +48,7 @@ const DirrectMessage = () => {
   useEffect(() => {
     if (auth.user?.id) {
       dispatch(getConversations(auth.user.id));
+      dispatch(getUser(auth.user.id));
     }
   }, [auth.user?.id, dispatch]);
 
@@ -71,20 +72,17 @@ const DirrectMessage = () => {
       onConnect: () => {
         console.log("STOMP connected");
         client.subscribe(
-          "/user/queue/message",   // subscribe đúng vào /user/queue/message
+          "/user/queue/message",   
           ({ body }) => {
-            console.log("Received message:", body);  // log message để xem nội dung
+            console.log("Received message:", body);  
             const newMessage = JSON.parse(body);
-            console.log("Parsed message:", newMessage);  // Kiểm tra thông tin đã được parse đúng
+            console.log("Parsed message:", newMessage);  
   
             if (newMessage.recipient?.id === auth.user?.id) {
-              console.log("Message is for me! Updating conversation.");
               dispatch({
                 type: "GET_CONVERSATION_MESSAGES",
                 payload: [...currentConversation, newMessage],
               });
-            } else {
-              console.log("Message is not for me, ignoring.");
             }
           }
         );
@@ -98,7 +96,7 @@ const DirrectMessage = () => {
     return () => client.deactivate();
   }, [auth.user?.id, currentConversation, dispatch]);
 
-  // 4. Gửi tin nhắn
+  
   const handleSendMessage = () => {
     if (!message.trim()) return;
     const payload = {
@@ -109,7 +107,6 @@ const DirrectMessage = () => {
     setMessage("");
   };
 
-  // Giữ nguyên toàn bộ JSX/UI của bạn:
   return (
     <>
       <Grid container className="h-screen">

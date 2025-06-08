@@ -10,21 +10,21 @@ import TweetCard from "../HomeSection/TweetCard";
 import ProfileModal from "./ProfileModal";
 import { useDispatch, useSelector } from "react-redux";
 import { findUserById, followUser } from "../../Store/Auth/Action";
-import { getUserstweet } from "../../Store/twit/Action";
+import { getUserLikedTwit, getUserRepliedtwit, getUserstweet } from "../../Store/twit/Action";
 
 const Profile = () => {
-  const {auth}=useSelector((store)=>store);
-  const {twit}=useSelector((store)=>store);
+  const { auth } = useSelector((store) => store);
+  const { twit } = useSelector((store) => store);
   const [tabValue, setTabValue] = useState("1");
   const navigate = useNavigate();
   const [openProfileModal, setOpenProfileModal] = useState(false);
   const handleOpenProfileModal = () => setOpenProfileModal(true);
   const handleClose = () => setOpenProfileModal(false);
   const handleBack = () => navigate(-1);
-  const dispatch=useDispatch();
-  const {id}=useParams();
+  const dispatch = useDispatch();
+  const { id } = useParams();
   const handleFollowUser = () => {
-    dispatch(followUser(id))
+    dispatch(followUser(id));
     console.log("follow user");
   };
   const handleTabChange = (event, newValue) => {
@@ -36,10 +36,13 @@ const Profile = () => {
       console.log("user tweet");
     }
   };
-  useEffect(()=>{
+  useEffect(() => {
+    console.log("id: "+ id);
     dispatch(findUserById(id));
     dispatch(getUserstweet(id));
-  },[id,dispatch])
+    dispatch(getUserLikedTwit(id));
+    dispatch(getUserRepliedtwit(id));
+  }, [id, dispatch]);
   return (
     <div>
       <section
@@ -101,7 +104,9 @@ const Profile = () => {
         </div>
         <div>
           <div className="flex items-center">
-            <h1 className="m-0 font-bold !text-lg">{auth?.findUser?.fullName}</h1>
+            <h1 className="m-0 font-bold !text-lg">
+              {auth?.findUser?.fullName}
+            </h1>
             {true && (
               <img
                 className="ml-2 w-5 h-5"
@@ -110,13 +115,13 @@ const Profile = () => {
               />
             )}
           </div>
-          <h1 className="!text-gray-500 !text-sm">@{auth?.findUser?.fullName?.split(" ").join("_").toLowerCase()}</h1>
+          <h1 className="!text-gray-500 !text-sm">
+            @{auth?.findUser?.fullName?.split(" ").join("_").toLowerCase()}
+          </h1>
         </div>
 
         <div className="mt-2 space-y-3">
-          <p>
-            {auth?.findUser?.bio}
-          </p>
+          <p>{auth?.findUser?.bio}</p>
           <div className="py-1 flex space-x-5">
             <div className="flex items-center text-gray-500">
               <BusinessCenterIcon />
@@ -140,7 +145,7 @@ const Profile = () => {
               <span className="text-gray-500">Following</span>
             </div>
             <div className="flex items-center space-x-1 font-semibold">
-              <span>{auth?.findUser?.followers?.length }</span>
+              <span>{auth?.findUser?.followers?.length}</span>
               <span className="text-gray-500">Followers</span>
             </div>
           </div>
@@ -163,18 +168,26 @@ const Profile = () => {
             </Box>
             <TabPanel value="1">
               {twit.twits.map((item) => (
-                <TweetCard key={item.id} item={item}/>
+                <TweetCard key={item.id} item={item} />
               ))}
             </TabPanel>
-            <TabPanel value="2">User Replies</TabPanel>
-            <TabPanel value="3">Media</TabPanel>
-            <TabPanel value="4">Likes</TabPanel>
+            <TabPanel value="2">
+              {twit.repliedTwits.map((item) => (
+                <TweetCard key={item.id} item={item} />
+              ))}
+            </TabPanel>
+            <TabPanel value="3">Coming soon...</TabPanel>
+            <TabPanel value="4">
+              {twit.likedTwits.map((item) => (
+                <TweetCard key={item.id} item={item} />
+              ))}
+            </TabPanel>
           </TabContext>
         </Box>
       </section>
 
       <section>
-        <ProfileModal handleClose={handleClose} open={openProfileModal}/>
+        <ProfileModal handleClose={handleClose} open={openProfileModal} />
       </section>
     </div>
   );

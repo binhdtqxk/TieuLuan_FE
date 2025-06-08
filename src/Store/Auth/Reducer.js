@@ -22,6 +22,8 @@ import {
   FORGOT_PASSWORD_SUCCESS,
   FORGOT_PASSWORD_REQUEST,
   FORGOT_PASSWORD_FAILURE,
+  GET_USER_SUCCESS,
+  GET_USER_FAILURE,
 } from "./Actiontype";
 
 const initialState = {
@@ -150,6 +152,16 @@ export const authReducer = (state = initialState, action) => {
           ...state.error,
           forgotPassword: action.payload,
         },
+      };
+    case GET_USER_SUCCESS:
+      return {
+        ...state,
+        user: action.payload,
+      };
+    case GET_USER_FAILURE:
+      return {
+        ...state,
+        error: action.payload,
       };
     default:
       return state;

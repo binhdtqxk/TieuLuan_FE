@@ -94,7 +94,7 @@ const Navigation = () => {
               <div
                 key={item.title}
                 className="cursor-pointer flex space-x-3 items-center text-2xl mt-1.5"
-                onClick={handleMoreClick} // Use our custom More handler
+                onClick={handleMoreClick} 
               >
                 {item.icon}
                 <p className="text-2xl m-0">{item.title}</p>

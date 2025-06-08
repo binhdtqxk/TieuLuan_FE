@@ -124,37 +124,6 @@ const UserAnalytics = () => {
           </Paper>
         </Grid>
 
-        {/* User Activity Chart */}
-        <Grid item xs={12}>
-          <Paper sx={{ p: 2 }}>
-            <Typography component="h2" variant="h6" color="primary" gutterBottom>
-              User Activity
-            </Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart
-                data={userActivityData}
-                margin={{
-                  top: 5,
-                  right: 30,
-                  left: 20,
-                  bottom: 5,
-                }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey={userAnalytics.userActivityChart.series[0].name}
-                  stroke="#82ca9d"
-                  activeDot={{ r: 8 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </Paper>
-        </Grid>
 
         {/* Most Followed Users Chart */}
         <Grid item xs={12}>

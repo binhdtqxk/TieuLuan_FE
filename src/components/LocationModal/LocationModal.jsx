@@ -154,7 +154,7 @@ const LocationModal = ({
             textAlign: "center",
           }}
         >
-          Tìm kiếm vị trí
+          Looking for location
         </div>
         <IconButton
           edge="end"
@@ -220,7 +220,7 @@ const LocationModal = ({
                 variant="body2"
                 sx={{ ml: 2, mb: 1, color: "#bbb", fontWeight: "medium" }}
               >
-                Được gắn thẻ
+                Tagged
               </Typography>
               <Box
                 sx={{
@@ -259,7 +259,7 @@ const LocationModal = ({
               variant="body2"
               sx={{ ml: 2, mb: 1, color: "#bbb", fontWeight: "medium" }}
             >
-              Gợi ý
+              Recommend
             </Typography>
           </>
         )}
@@ -269,7 +269,7 @@ const LocationModal = ({
             variant="body2"
             sx={{ ml: 2, mb: 1, color: "#bbb", fontWeight: "medium" }}
           >
-            Gợi ý
+            Recommend
           </Typography>
         )}
 

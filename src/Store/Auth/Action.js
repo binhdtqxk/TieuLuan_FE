@@ -25,6 +25,8 @@ import {
   FORGOT_PASSWORD_REQUEST,
   FORGOT_PASSWORD_SUCCESS,
   FORGOT_PASSWORD_FAILURE,
+  GET_USER_SUCCESS,
+  GET_USER_FAILURE,
 } from "./Actiontype";
 
 export const loginUser = (loginData) => async (dispatch) => {
@@ -174,5 +176,14 @@ export const forgotPassword = (email) => async (dispatch) => {
   } catch (error) {
     console.log("error", error);
     dispatch({ type: FORGOT_PASSWORD_FAILURE, payload: error.message });
+  }
+};
+export const getUser = (userId) => async (dispatch) => {
+  try {
+    const { data } = await axios.post(`${API_BASE_URL}/api/users/${userId}`);
+    dispatch({ type: GET_USER_SUCCESS, payload: data });
+  } catch (error) {
+    console.log("error", error);
+    dispatch({ type: GET_USER_FAILURE, payload: error.message });
   }
 };
