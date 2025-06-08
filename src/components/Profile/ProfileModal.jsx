@@ -5,9 +5,17 @@ import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Button from "@mui/material/Button";
 import { useFormik } from "formik";
-import { Avatar, IconButton, TextField } from "@mui/material";
+import {
+  Avatar,
+  Grid,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { useDispatch, useSelector} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { updateUserProfile } from "../../Store/Auth/Action";
 import { uploadToCloudinary } from "../../Utils/uploadToCloudinary";
 import { useState } from "react";
@@ -26,17 +34,30 @@ const style = {
   borderRadius: 4,
 };
 
-export default function ProfileModal({open,handleClose}) {
+export default function ProfileModal({ open, handleClose }) {
   // const [open, setOpen] = React.useState(false);
 
-  const {auth}=useSelector((store)=>store);
+  const { auth } = useSelector((store) => store);
   const [uploading, setUplading] = React.useState(false);
-  const dispatch=useDispatch();
-  const [selectedImage,setSelectedImage]=useState("");
+  const dispatch = useDispatch();
+  const [selectedImage, setSelectedImage] = useState("");
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 100 }, (_, i) => currentYear - i); //Create array from currentyear to currentYear-100
+  const days = Array.from({ length: 31 }, (_, i) => i + 1);
+  const months = [
+    { value: 1, label: "January" },
+    { value: 2, label: "February" },
+  ];
   const handleSubmit = (values) => {
     dispatch(updateUserProfile(values));
     console.log("handle submit", values);
     setSelectedImage("");
+  };
+  const handleDateChange = (name) => (event) => {
+    formik.setFieldValue("dateOfBirth", {
+      ...formik.values.dateOfBirth,
+      [name]: event.target.value,
+    });
   };
 
   const formik = useFormik({
@@ -47,10 +68,15 @@ export default function ProfileModal({open,handleClose}) {
       bio: "",
       backgroundImage: "",
       image: "",
+      dateOfBirth: {
+        day: "",
+        month: "",
+        year: "",
+      },
     },
     onSubmit: handleSubmit,
   });
-  const handleImageChange = async(event) => {
+  const handleImageChange = async (event) => {
     setUplading(true);
     const { name } = event.target;
     const file = await uploadToCloudinary(event.target.files[0]);
@@ -91,7 +117,7 @@ export default function ProfileModal({open,handleClose}) {
                     <div className="relative">
                       <img
                         className="w-full h-[12rem] object-cover object-center"
-                        src="https://cdn.pixabay.com/photo/2025/03/21/21/22/roche-9485693_1280.jpg"
+                        src=""
                         alt=""
                       />
                       <input
@@ -174,11 +200,58 @@ export default function ProfileModal({open,handleClose}) {
                       formik.touched.location && formik.errors.location
                     }
                   />
-                  <div className="my-3">
-                    <p className="!text-lg">Birth date . Edit</p>
-                    <p className="!text-2xl">December 16, 2003</p>
-                  </div>
-                  <p className="py-3 text-lg">Edit Professional Profile</p>
+
+                  <Grid container spacing={0}>
+                    <Grid item xs={12}><InputLabel className="mt-3 mb-0 p-0">Birth Date</InputLabel></Grid>
+                    <Grid item xs={4}>
+                      <InputLabel>Date</InputLabel>
+                      <Select
+                        name="day"
+                        value={formik.values.dateOfBirth.day}
+                        onChange={handleDateChange("day")}
+                        onBlur={formik.handleBlur}
+                        fullWidth
+                      >
+                        {days.map((day) => (
+                          <MenuItem key={day} value={day}>
+                            {day}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </Grid>
+                    <Grid item xs={4}>
+                      <InputLabel>Month</InputLabel>
+                      <Select
+                        name="month"
+                        value={formik.values.dateOfBirth.month}
+                        onChange={handleDateChange("month")}
+                        onBlur={formik.handleBlur}
+                        fullWidth
+                      >
+                        {months.map((month) => (
+                          <MenuItem key={month.label} value={month.value}>
+                            {month.label}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </Grid>
+                    <Grid item xs={4}>
+                      <InputLabel>Year</InputLabel>
+                      <Select
+                        name="year"
+                        value={formik.values.dateOfBirth.year}
+                        onChange={handleDateChange("year")}
+                        onBlur={formik.handleBlur}
+                        fullWidth
+                      >
+                        {years.map((year) => (
+                          <MenuItem key={year} value={year}>
+                            {year}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </Grid>
+                  </Grid>
                 </div>
               </div>
             </form>

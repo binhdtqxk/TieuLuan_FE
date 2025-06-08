@@ -25,7 +25,7 @@ const NewMessageModal = ({ open, handleClose, onUserSelect }) => {
   const followers = user?.followers || [];
 
   const handleUserClick = (id) => {
-    onUserSelect(id);
+    navigate(`/messages/${id}`)
     handleClose();
   };
 

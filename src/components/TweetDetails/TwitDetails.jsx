@@ -12,7 +12,7 @@ const TwitDetails = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
   const { twit } = useSelector((store) => store);
-  const date = new Date(twit.twit.createdAt.split('.')[0] + 'Z');
+  const date = new Date(twit?.twit?.createdAt?.split('.')[0] + 'Z');
   const options = { 
     hour: 'numeric', 
     minute: 'numeric', 
