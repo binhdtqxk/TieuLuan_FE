@@ -209,7 +209,7 @@ const UserManagement = () => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={-1} // Since we don't know the total count, use -1 to enable server-side pagination
+          count={-1} 
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

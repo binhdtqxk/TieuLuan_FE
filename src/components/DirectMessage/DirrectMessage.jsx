@@ -37,14 +37,12 @@ const DirrectMessage = () => {
   const dispatch = useDispatch();
   const { subscribe } = useStomp();
 
-  // Lấy thẳng từ Redux
   const auth = useSelector((state) => state.auth);
   const recipientList = useSelector((state) => state.dm.conversations);
   const currentConversation = useSelector((state) => state.dm.conversation);
   const currentRecipient = useSelector((state) => state.auth.findUser);
 
 
-  // 1. Load conversations khi mount
   useEffect(() => {
     if (auth.user?.id) {
       dispatch(getConversations(auth.user.id));
@@ -52,7 +50,6 @@ const DirrectMessage = () => {
     }
   }, [auth.user?.id, dispatch]);
 
-  // 2. Khi recipientId thay đổi thì fetch user + messages
   useEffect(() => {
     if (recipientId) {
       dispatch(findUserById(recipientId));
