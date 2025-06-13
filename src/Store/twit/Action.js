@@ -5,6 +5,7 @@ import { FIND_TWEET_BY_ID_FAILURE, FIND_TWEET_BY_ID_SUCCESS, GET_ALL_TWEETS_FAIL
 export const getAllTweets=()=>async(dispatch)=>{
     try{
         const {data}=await api.get("/api/twits/")
+        console.log("jwt: "+localStorage.getItem("jwt"))
         console.log("get all twits : ",data)
         dispatch({type: GET_ALL_TWEETS_SUCCESS,payload:data})
     }catch(error){

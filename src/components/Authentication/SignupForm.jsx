@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   Grid,
-  Grid2,
   InputLabel,
-  MenuItem,
   Select,
   TextField,
+  MenuItem,
+  CircularProgress,
+  Typography,
 } from "@mui/material";
 import { blue } from "@mui/material/colors";
 import { useFormik } from "formik";
@@ -18,25 +19,38 @@ import {
   sendVerificationCode,
 } from "../../Store/Auth/Action";
 import VerificationModal from "./VerificationModal";
+
 const validationSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Email is Required"),
   password: Yup.string().required("Password is required"),
 });
+
 const currentYear = new Date().getFullYear();
-const years = Array.from({ length: 100 }, (_, i) => currentYear - i); //Create array from currentyear to currentYear-100
+const years = Array.from({ length: 100 }, (_, i) => currentYear - i);
 const days = Array.from({ length: 31 }, (_, i) => i + 1);
 const months = [
   { value: 1, label: "January" },
   { value: 2, label: "February" },
+  { value: 3, label: "March" },
+  { value: 4, label: "April" },
+  { value: 5, label: "May" },
+  { value: 6, label: "June" },
+  { value: 7, label: "July" },
+  { value: 8, label: "August" },
+  { value: 9, label: "September" },
+  { value: 10, label: "October" },
+  { value: 11, label: "November" },
+  { value: 12, label: "December" },
 ];
+
 const SignupForm = () => {
   const { auth } = useSelector((state) => state);
   const dispatch = useDispatch();
   const [openVerificationModal, setOpenVerificationModal] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
-  const [serverCode, setServerCode] = useState("");
-  const [loading, setLoading] = useState(false);
   const [emailError, setEmailError] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const formik = useFormik({
     initialValues: {
       fullName: "",
@@ -49,20 +63,33 @@ const SignupForm = () => {
       },
     },
     validationSchema,
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       setLoading(true);
       setEmailError("");
-      dispatch(checkEmailExisted(values.email));
-      if (auth.checkEmailExisted) {
-        setEmailError("Email is already used with another account");
+      try {
+        await dispatch(checkEmailExisted(values.email)); // Wait for the async action to complete
+      } catch (error) {
+        console.error("Error checking email", error);
+        setEmailError("Error checking email. Please try again.");
         setLoading(false);
         return;
       }
-      dispatch(sendVerificationCode(values.email));
-      setOpenVerificationModal(true);
-      setLoading(false);
     },
   });
+
+  // Effect to handle email existence check
+  useEffect(() => {
+    if (loading && auth.emailExisted !== undefined) {
+      if (auth.emailExisted) {
+        setEmailError("Email is already used with another account");
+        setLoading(false);
+      } else {
+        dispatch(sendVerificationCode(formik.values.email));
+        setOpenVerificationModal(true);
+        setLoading(false);
+      }
+    }
+  }, [auth.emailExisted, dispatch, formik.values.email, loading]);
 
   const handleDateChange = (name) => (event) => {
     formik.setFieldValue("dateOfBirth", {
@@ -70,25 +97,24 @@ const SignupForm = () => {
       [name]: event.target.value,
     });
   };
+
   const handleVerificationSubmit = () => {
-    console.log("input: "+verificationCode);
-    console.log("auth code: "+auth.verificationCode);
+    console.log("input: " + verificationCode);
+    console.log("auth code: " + auth.verificationCode);
     if (verificationCode == auth.verificationCode) {
       const { day, month, year } = formik.values.dateOfBirth;
       const dateOfBirth = `${year}-${month}-${day}`;
-
       const registrationData = {
         ...formik.values,
         dateOfBirth,
       };
-
       dispatch(registerUser(registrationData));
-
       setOpenVerificationModal(false);
     } else {
       alert("Incorrect verification code. Please try again.");
     }
   };
+
   const handleResendCode = async () => {
     setLoading(true);
     try {
@@ -101,6 +127,7 @@ const SignupForm = () => {
       setLoading(false);
     }
   };
+
   return (
     <>
       <form onSubmit={formik.handleSubmit}>
@@ -108,7 +135,7 @@ const SignupForm = () => {
           <Grid item xs={12}>
             <TextField
               fullWidth
-              label="full name"
+              label="Full Name"
               name="fullName"
               variant="outlined"
               size="large"
@@ -129,8 +156,13 @@ const SignupForm = () => {
               value={formik.values.email}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              error={formik.touched.email && Boolean(formik.errors.email)}
-              helperText={formik.touched.email && formik.errors.email}
+              error={
+                (formik.touched.email && Boolean(formik.errors.email)) ||
+                Boolean(emailError)
+              }
+              helperText={
+                (formik.touched.email && formik.errors.email) || emailError
+              }
             />
           </Grid>
           <Grid item xs={12}>
