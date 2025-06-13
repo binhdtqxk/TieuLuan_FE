@@ -1,167 +1,161 @@
 import {
-  GET_USER_PROFILE_FAILURE,
-  GET_USER_PROFILE_REQUEST,
-  GET_USER_PROFILE_SUCCESS,
-  LOGIN_USER_FAILURE,
   LOGIN_USER_REQUEST,
   LOGIN_USER_SUCCESS,
-  REGISTER_USER_FAILURE,
   REGISTER_USER_REQUEST,
   REGISTER_USER_SUCCESS,
-  LOGOUT,
+  GET_USER_PROFILE_REQUEST,
+  GET_USER_PROFILE_SUCCESS,
   FIND_USER_BY_ID_SUCCESS,
-  FOLLOW_USER_SUCCESS,
   UPDATE_USER_SUCCESS,
+  FOLLOW_USER_SUCCESS,
+  LOGOUT,
   CHECK_EMAIL_EXISTED_SUCCESS,
-  CHECK_EMAIL_EXISTED_FAILURE,
   SEND_EMAIL_VERIFICATION_SUCCESS,
-  SEND_EMAIL_VERIFICATION_FAILURE,
-  CHANGE_PASSWORD_FAILURE,
-  CHANGE_PASSWORD_SUCCESS,
   CHANGE_PASSWORD_REQUEST,
-  FORGOT_PASSWORD_SUCCESS,
+  CHANGE_PASSWORD_SUCCESS,
   FORGOT_PASSWORD_REQUEST,
-  FORGOT_PASSWORD_FAILURE,
+  FORGOT_PASSWORD_SUCCESS,
   GET_USER_SUCCESS,
-  GET_USER_FAILURE,
-} from "./Actiontype";
+  LOGIN_WITH_GOOGLE_SUCCESS,
+} from './Actiontype';
 
 const initialState = {
   user: null,
-  loading: false,
-  error: null,
+  loading: {
+    general: false,
+    changePassword: false,
+    forgotPassword: false,
+  },
+  error: {
+    login: null,
+    register: null,
+    getProfile: null,
+    findUser: null,
+    updateProfile: null,
+    followUser: null,
+    checkEmail: null,
+    sendVerification: null,
+    changePassword: null,
+    forgotPassword: null,
+    getUser: null,
+    loginGoogle: null,
+  },
   jwt: null,
+  emailExisted: null,
+  verificationCode: null,
+  findUser: null,
 };
+
 export const authReducer = (state = initialState, action) => {
   switch (action.type) {
+    case 'SET_ERROR':
+      return {
+        ...state,
+        error: {
+          ...state.error,
+          [action.payload.errorType]: action.payload.message,
+        },
+        loading: {
+          ...state.loading,
+          general: false,
+          changePassword: action.payload.errorType === 'changePassword' ? false : state.loading.changePassword,
+          forgotPassword: action.payload.errorType === 'forgotPassword' ? false : state.loading.forgotPassword,
+        },
+      };
+    case 'CLEAR_ERROR':
+      return {
+        ...state,
+        error: {
+          ...state.error,
+          [action.payload.errorType]: null,
+        },
+      };
     case LOGIN_USER_REQUEST:
     case REGISTER_USER_REQUEST:
     case GET_USER_PROFILE_REQUEST:
-      return { ...state, loading: true, error: null };
+      return {
+        ...state,
+        loading: { ...state.loading, general: true },
+        error: { ...state.error, [action.type.split('_')[0].toLowerCase()]: null },
+      };
     case LOGIN_USER_SUCCESS:
     case REGISTER_USER_SUCCESS:
-      return { ...state, loading: false, error: null, jwt: action.payload };
+    case LOGIN_WITH_GOOGLE_SUCCESS:
+      return {
+        ...state,
+        loading: { ...state.loading, general: false },
+        error: { ...state.error, login: null, register: null, loginGoogle: null },
+        jwt: action.payload,
+      };
     case GET_USER_PROFILE_SUCCESS:
       return {
         ...state,
-        loading: false,
-        error: null,
+        loading: { ...state.loading, general: false },
+        error: { ...state.error, getProfile: null },
         user: action.payload,
       };
-    case UPDATE_USER_SUCCESS:
     case FIND_USER_BY_ID_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        error: null,
-        findUser: action.payload,
-      };
+    case UPDATE_USER_SUCCESS:
     case FOLLOW_USER_SUCCESS:
       return {
         ...state,
-        loading: false,
-        error: null,
+        loading: { ...state.loading, general: false },
+        error: {
+          ...state.error,
+          findUser: null,
+          updateProfile: null,
+          followUser: null,
+        },
         findUser: action.payload,
       };
     case LOGOUT:
       return initialState;
-    case LOGIN_USER_FAILURE:
-    case REGISTER_USER_FAILURE:
-    case GET_USER_PROFILE_FAILURE:
-    case CHECK_EMAIL_EXISTED_FAILURE:
-    case SEND_EMAIL_VERIFICATION_FAILURE:
-      return {
-        ...state,
-        loading: false,
-        error: action.payload,
-      };
     case CHECK_EMAIL_EXISTED_SUCCESS:
       return {
         ...state,
-        loading: false,
+        loading: { ...state.loading, general: false },
+        error: { ...state.error, checkEmail: null },
         emailExisted: action.payload,
       };
     case SEND_EMAIL_VERIFICATION_SUCCESS:
       return {
         ...state,
-        loading: false,
+        loading: { ...state.loading, general: false },
+        error: { ...state.error, sendVerification: null },
         verificationCode: action.payload,
-      };
-    case CHANGE_PASSWORD_SUCCESS:
-      return {
-        ...state,
-        user: action.payload,
-        loading: {
-          ...state.loading,
-          changePassword: false,
-        },
       };
     case CHANGE_PASSWORD_REQUEST:
       return {
         ...state,
-        loading: {
-          ...state.loading,
-          changePassword: true,
-        },
-        error: {
-          ...state.error,
-          changePassword: null,
-        },
+        loading: { ...state.loading, changePassword: true },
+        error: { ...state.error, changePassword: null },
       };
-    case CHANGE_PASSWORD_FAILURE:
+    case CHANGE_PASSWORD_SUCCESS:
       return {
         ...state,
-        loading: {
-          ...state.loading,
-          changePassword: false,
-        },
-        error: {
-          ...state.error,
-          changePassword: action.payload,
-        },
-      };
-    case FORGOT_PASSWORD_SUCCESS:
-      return {
-        ...state,
+        loading: { ...state.loading, changePassword: false },
+        error: { ...state.error, changePassword: null },
         user: action.payload,
-        loading: {
-          ...state.loading,
-          forgotPassword: false,
-        },
       };
     case FORGOT_PASSWORD_REQUEST:
       return {
         ...state,
-        loading: {
-          ...state.loading,
-          forgotPassword: true,
-        },
-        error: {
-          ...state.error,
-          forgotPassword: null,
-        },
+        loading: { ...state.loading, forgotPassword: true },
+        error: { ...state.error, forgotPassword: null },
       };
-    case FORGOT_PASSWORD_FAILURE:
+    case FORGOT_PASSWORD_SUCCESS:
       return {
         ...state,
-        loading: {
-          ...state.loading,
-          forgotPassword: false,
-        },
-        error: {
-          ...state.error,
-          forgotPassword: action.payload,
-        },
+        loading: { ...state.loading, forgotPassword: false },
+        error: { ...state.error, forgotPassword: null },
+        user: action.payload,
       };
     case GET_USER_SUCCESS:
       return {
         ...state,
+        loading: { ...state.loading, general: false },
+        error: { ...state.error, getUser: null },
         user: action.payload,
-      };
-    case GET_USER_FAILURE:
-      return {
-        ...state,
-        error: action.payload,
       };
     default:
       return state;

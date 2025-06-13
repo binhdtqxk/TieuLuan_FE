@@ -75,6 +75,7 @@ export const getAllUsers = (query = "", page = 0, size = 10) => async (dispatch)
             url += `&query=${encodeURIComponent(query)}`;
         }
         const { data } = await api.get(url);
+        console.log("users: "+data);
         dispatch({ type: GET_ALL_USER_SUCCESS, payload: data });
     } catch (error) {
         console.error("Error fetching all users:", error);

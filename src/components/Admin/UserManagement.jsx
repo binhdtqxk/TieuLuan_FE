@@ -79,6 +79,7 @@ const UserManagement = () => {
   const handleBanUser = async () => {
     try {
       await dispatch(banUser(selectedUser.id, banReason));
+      await dispatch(getAllUsers(searchQuery, page, rowsPerPage));
       handleCloseBanDialog();
     } catch (error) {
       console.error('Error banning user:', error);
@@ -88,6 +89,7 @@ const UserManagement = () => {
   const handleUnbanUser = async () => {
     try {
       await dispatch(unbanUser(selectedUser.id));
+      await dispatch(getAllUsers(searchQuery, page, rowsPerPage));
       handleCloseUnbanDialog();
     } catch (error) {
       console.error('Error unbanning user:', error);
@@ -96,7 +98,7 @@ const UserManagement = () => {
 
   // Check if a user is banned based on verification status
   const isUserBanned = (user) => {
-    if (user.status && user.role?.role === 'ROLE_USER') {
+    if (user.verification.status==false && user.role?.role === 'ROLE_USER') {
       return true;
     }
     return false;

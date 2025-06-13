@@ -5,21 +5,25 @@ import AuthModel from "./AuthModal";
 import AuthModal from "./AuthModal";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { loginWithGoogle } from "../../Store/Auth/Action";
 const Authentication = () => {
   const [openAuthModal, setOpenAuthModal] = useState(false);
   const hanldeOpenAuthModal = () => setOpenAuthModal(true);
   const handleCloseAuthModal = () => setOpenAuthModal(false);
-  const navigate=useNavigate();
-  const handleOpenRegisterModal=()=>{
-    const path= "signup"
+  const dispatch=useDispatch();
+  const navigate = useNavigate();
+  const handleOpenRegisterModal = () => {
+    const path = "signup";
     navigate(`/${path}`);
     hanldeOpenAuthModal();
-  }
-  const handleOpenSignInModal=()=>{
-    const path= "signin"
+  };
+  const handleOpenSignInModal = () => {
+    const path = "signin";
     navigate(`/${path}`);
     hanldeOpenAuthModal();
-  }
+  };
   return (
     <div>
       <Grid className="overflow-y-hidden" container>
@@ -44,7 +48,19 @@ const Authentication = () => {
 
           <div className="w-[60%]">
             <div className="w-full">
-              <GoogleLogin width={365} />
+              <GoogleLogin
+                width={365}
+                onSuccess={async (credentialResponse) => {
+                  try {
+                    await dispatch(loginWithGoogle(credentialResponse.credential));
+                  } catch (error) {
+                    console.error("Google login failed:", error);
+                  }
+                }}
+                onError={() => {
+                  console.error("Google Login Failed");
+                }}
+              />
               <p className="py-2 m-0 text-center">OR</p>
               <Button
                 onClick={handleOpenRegisterModal}
